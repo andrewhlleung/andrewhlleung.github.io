@@ -77,8 +77,9 @@
   </select>
 
   <button type="submit">提交地圖資料</button>
+  <span id="latlng"></span>
 </form>
-<span id="latlng"></span>
+
 <script>
   // ⚠️ 換成你自己的 MapTiler Key
   const MAPTILER_KEY = "41uGlS49ziRg4ChbWBH9";
@@ -135,15 +136,18 @@
     // ✅ 這裡你可以送去後端
     // fetch("/api/save-map", { method: "POST", body: JSON.stringify(data) });
     document.getElementById('latlng').innerHTML = `${data.centerLat}, ${data.centerLng}`
-    alert(
+    //document.getElementById('latlng').innerHTML = data
+    msg = 
       `目前地圖範圍：\n` +
       `南：${data.bounds.south}\n` +
       `西：${data.bounds.west}\n` +
       `北：${data.bounds.north}\n` +
       `東：${data.bounds.east}\n\n` +
       `樣式：${data.mapStyle}\n縮放：${data.zoom}\n` + 
-      `Lat & Lng：${data.centerLat},${data.centerLng}\n`
-    );
+      `Lat & Lng：${data.centerLat},${data.centerLng}\n`;
+    alert(msg);
+    document.getElementById('latlng').innerHTML = msg
+
 
   }
 </script>
