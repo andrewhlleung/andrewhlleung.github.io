@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>地圖範圍選擇器</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  form {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.2);
+    width: 420px;
+    text-align: center;
+  }
+
+  #map-container {
+    border: 12px solid #b08a58;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    background: white;
+  }
+
+  #map {
+    height: 320px;
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+
+  button {
+    background: #0078d7;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #005ea6;
+  }
+</style>
+</head>
+<body>
+
+<form onsubmit="submitForm(event)">
+  <h3>選擇地圖樣式</h3>
+  
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+
+  <select id="styleSelect" onchange="changeStyle(this.value)">
+    <option value="streets">標準地圖 (Streets)</option>
+    <option value="streets4">標準地圖 4 (Streets)</option>
+    <option value="toner">黑白 (Toner)</option>
+    <option value="topo">地形 (Topo)</option>
+    <option value="satellite">衛星圖 (Satellite)</option>
+  </select>
+
+  <button type="submit">提交地圖資料</button>
+</form>
+
+<script>
+  // ⚠️ 換成你自己的 MapTiler Key
+  const MAPTILER_KEY = "41uGlS49ziRg4ChbWBH9";
+
+  const mapStyles = {
+    streets: `https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+    streets4: `https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+    toner: `https://api.maptiler.com/maps/toner/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+    topo: `https://api.maptiler.com/maps/topo/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`,
+    satellite: `https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAPTILER_KEY}`
+  };
+
+  const map = L.map('map', {
+    center: [22.3193, 114.1694],
+    zoom: 11
+  });
+
+  let currentLayer = L.tileLayer(mapStyles.streets, {
+    attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+    crossOrigin: true
+  }).addTo(map);
+
+  function changeStyle(style) {
+    map.removeLayer(currentLayer);
+    currentLayer = L.tileLayer(mapStyles[style], {
+      attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+      crossOrigin: true
+    });
+    map.addLayer(currentLayer);
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+
+    // 取得目前地圖方形範圍
+    const bounds = map.getBounds();
+    const sw = bounds.getSouthWest(); // 西南角
+    const ne = bounds.getNorthEast(); // 東北角
+    const center = map.getCenter();
+
+    const data = {
+      mapStyle: document.getElementById('styleSelect').value,
+      zoom: map.getZoom(),
+      centerLat: center.lat.toFixed(6),
+      centerLng: center.lng.toFixed(6),
+      bounds: {
+        south: sw.lat.toFixed(6),
+        west: sw.lng.toFixed(6),
+        north: ne.lat.toFixed(6),
+        east: ne.lng.toFixed(6)
+      }
+    };
+
+    // ✅ 這裡你可以送去後端
+    // fetch("/api/save-map", { method: "POST", body: JSON.stringify(data) });
+
+    alert(
+      `目前地圖範圍：\n` +
+      `南：${data.bounds.south}\n` +
+      `西：${data.bounds.west}\n` +
+      `北：${data.bounds.north}\n` +
+      `東：${data.bounds.east}\n\n` +
+      `樣式：${data.mapStyle}\n縮放：${data.zoom}`
+    );
+  }
+</script>
+
+</body>
+</html>
