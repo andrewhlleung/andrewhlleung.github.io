@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MapTiler 自訂 Dark and Gold Style</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- MapTiler SDK -->
+  <link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.3.0/maptiler-sdk.css" rel="stylesheet">
+  <script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.3.0/maptiler-sdk.umd.js"></script>
+  <style>
+    html, body { margin:0; padding:0; height:100%; }
+    #map { width:100%; height:100vh; }
+    #controls {
+      position:absolute;
+      top:10px; left:10px;
+      background:white; padding:8px; border-radius:8px; z-index:10;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="controls">
+    <label for="mapStyle">地圖樣式:</label>
+    <select id="mapStyle">
+      <option value="streets-v2">Streets</option>
+      <option value="topo-v2">Topo</option>
+      <option value="toner">Black & White (Toner)</option>
+      <option value="hybrid">Satellite</option>
+      <option value="019a494f-40d6-7dba-b962-6a9805f9a927">Dark and Gold</option>
+    </select>
+  </div>
+
+  <div id="map"></div>
+
+  <script>
+    // 🔑 換成你的 MapTiler API key
+    maptilersdk.config.apiKey = '41uGlS49ziRg4ChbWBH9';
+
+    // 預設地圖
+    let map = new maptilersdk.Map({
+      container: 'map',
+      style: maptilersdk.MapStyle.STREETS,
+      center: [114.1694, 22.3193],
+      zoom: 11
+    });
+
+    // 當使用者改變樣式
+    document.getElementById('mapStyle').addEventListener('change', function() {
+      const selected = this.value;
+      if (selected.startsWith('019a')) {
+        // 你的自訂 style ID（MapTiler Cloud）
+        map.setStyle(`https://api.maptiler.com/maps/${selected}/style.json?key=${maptilersdk.config.apiKey}`);
+      } else {
+        // 預設 MapTiler SDK 內建樣式
+        map.setStyle(`https://api.maptiler.com/maps/${selected}/style.json?key=${maptilersdk.config.apiKey}`);
+      }
+    });
+  </script>
+</body>
+</html>
