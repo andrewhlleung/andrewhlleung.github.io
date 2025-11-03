@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<title>地圖海報生成器 (MapTiler SDK)</title>
+
+<!-- MapTiler SDK -->
+<link href="https://cdn.maptiler.com/maptiler-sdk-js/v2.3.0/maptiler-sdk.css" rel="stylesheet" />
+<script src="https://cdn.maptiler.com/maptiler-sdk-js/v2.3.0/maptiler-sdk.umd.js"></script>
+
+<style>
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  form {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.2);
+    width: 440px;
+    text-align: center;
+  }
+
+  #map-container {
+    border: 12px solid #b08a58;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    background: white;
+  }
+
+  #map {
+    height: 320px;
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+
+  button {
+    background: #0078d7;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #005ea6;
+  }
+
+  h3 {
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<form onsubmit="submitForm(event)">
+  <h3>地圖海報設定 (MapTiler)</h3>
+  
+  <label>Localisation (搜尋地點):</label>
+  <input type="text" id="searchBox" placeholder="輸入地點名稱 (例如: Tokyo)" />
+  <button type="button" onclick="searchLocation()">🔍 搜尋地點</button>
+
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+
+  <label>地圖樣式：</label>
+  <select id="styleSelect" onchange="changeStyle(this.value)">
+    <option value="streets-v2">標準地圖 (Streets)</option>
+    <option value="topo-v2">地形 (Topo)</option>
+    <option value="toner">黑白 (Toner)</option>
+    <option value="hybrid">衛星圖 (Satellite)</option>
+    <option value="019a494f-40d6-7dba-b962-6a9805f9a927">暗黑金 (Dark and Gold)</option>
+  </select>
+
+  <label>尺寸：</label>
+  <select id="sizeSelect">
+    <option value="30x35">30 × 35 cm</option>
+    <option value="40x45">40 × 45 cm</option>
+    <option value="60x70">60 × 70 cm</option>
+  </select>
+
+  <label>Line 1：</label>
+  <input type="text" id="line1" placeholder="輸入主標題 (例如: New York, United States)" />
+
+  <label>Line 2：</label>
+  <input type="text" id="line2" placeholder="輸入副標題 (例如: 22.52°N, 114.21°E)" />
+
+  <button type="submit">提交地圖資料</button>
+</form>
+
+<script>
+  // ✅ 換成你的 MapTiler API Key
+  const MAPTILER_KEY = "41uGlS49ziRg4ChbWBH9";
+
+  // 初始化 MapTiler SDK 設定
+  maptilersdk.config.apiKey = MAPTILER_KEY;
+
+  // 初始化地圖（預設用街道樣式）
+  let map = new maptilersdk.Map({
+    container: 'map',
+    style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${MAPTILER_KEY}`,
+    center: [114.1694, 22.3193],
+    zoom: 11
+  });
+
+  // 🗺️ 切換地圖樣式
+  function changeStyle(styleId) {
+    const url = `https://api.maptiler.com/maps/${styleId}/style.json?key=${MAPTILER_KEY}`;
+    map.setStyle(url);
+  }
+
+  // 🔍 搜尋地點
+  async function searchLocation() {
+    const query = document.getElementById("searchBox").value.trim();
+    if (!query) return alert("請輸入地點名稱");
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+    try {
+      const res = await fetch(url);
+      const results = await res.json();
+
+      if (results.length === 0) {
+        alert("找不到該地點，請嘗試其他名稱");
+        return;
+      }
+
+      const { lat, lon, display_name } = results[0];
+      map.flyTo({ center: [lon, lat], zoom: 12 });
+      document.getElementById("line1").value = display_name;
+      document.getElementById("line2").value = `${parseFloat(lat).toFixed(2)}°N, ${parseFloat(lon).toFixed(2)}°E`;
+    } catch (err) {
+      console.error(err);
+      alert("搜尋失敗");
+    }
+  }
+
+  // 📤 提交表單
+  function submitForm(e) {
+    e.preventDefault();
+
+    const center = map.getCenter();
+    const bounds = map.getBounds();
+
+    const data = {
+      localisation: document.getElementById("searchBox").value,
+      mapStyle: document.getElementById("styleSelect").value,
+      size: document.getElementById("sizeSelect").value,
+      line1: document.getElementById("line1").value,
+      line2: document.getElementById("line2").value,
+      zoom: map.getZoom(),
+      center: { lat: center.lat, lng: center.lng },
+      bounds: {
+        south: bounds.getSouth(),
+        west: bounds.getWest(),
+        north: bounds.getNorth(),
+        east: bounds.getEast()
+      }
+    };
+
+    console.log(data);
+
+    alert(
+      `✅ 提交資料：\n\n` +
+      `地點：${data.localisation}\n` +
+      `樣式：${data.mapStyle}\n尺寸：${data.size}\n` +
+      `Line1：${data.line1}\nLine2：${data.line2}\n\n` +
+      `中心：${data.center.lat.toFixed(4)}, ${data.center.lng.toFixed(4)}\n` +
+      `地圖範圍：南=${data.bounds.south.toFixed(4)}, 西=${data.bounds.west.toFixed(4)}\n北=${data.bounds.north.toFixed(4)}, 東=${data.bounds.east.toFixed(4)}`
+    );
+  }
+</script>
+
+</body>
+</html>
