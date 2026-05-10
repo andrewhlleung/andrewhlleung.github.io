@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <title>後台管理 · 茶記 0823</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;500;600;700;800&family=Noto+Serif+HK:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #FFF8EE; --bg-soft: #F1E9D8; --ink: #1A1410; --primary: #E63946; --accent: #FFC93C;
+      --card: #FFFFFF; --line: #E5DBC4;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; }
+    body { background: var(--bg); color: var(--ink); font-family: 'Noto Sans HK', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .mono { font-family: 'IBM Plex Mono', monospace; }
+    .serif { font-family: 'Noto Serif HK', serif; }
+
+    header { padding: 22px 32px; border-bottom: 1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:20px; background: var(--card); position:sticky; top:0; z-index:10; }
+    header h1 { margin:0; font-size:22px; font-weight:800; letter-spacing:-0.5px; }
+    header .crumb { font-family:'IBM Plex Mono', monospace; font-size:11px; opacity:0.55; letter-spacing:1.5px; }
+    header nav a { color: var(--ink); text-decoration: none; font-size: 12px; font-family:'IBM Plex Mono', monospace; padding: 8px 14px; border-radius: 999px; border: 1.5px solid transparent; }
+    header nav a:hover { border-color: var(--ink); }
+    header nav a.active { background: var(--ink); color: var(--bg); }
+
+    main { padding: 24px 32px 60px; max-width: 1280px; margin: 0 auto; }
+    .toolbar { display:flex; align-items:center; gap:12px; margin-bottom: 18px; flex-wrap:wrap; }
+    .toolbar input[type="search"] { flex:1; min-width: 220px; padding: 10px 14px; border:1px solid var(--line); background: var(--card); border-radius: 10px; font:inherit; outline:none; }
+    .toolbar input[type="search"]:focus { border-color: var(--ink); }
+    .toolbar select { padding: 10px 14px; border:1px solid var(--line); background: var(--card); border-radius: 10px; font:inherit; outline:none; cursor:pointer; }
+
+    .btn { padding: 10px 16px; font:inherit; font-weight: 700; border: 2px solid var(--ink); background: var(--ink); color: var(--bg); border-radius: 10px; cursor: pointer; display:inline-flex; align-items:center; gap:6px; }
+    .btn.ghost { background: transparent; color: var(--ink); }
+    .btn.danger { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .btn.accent { border-color: var(--accent); background: var(--accent); color: var(--ink); }
+    .btn.sm { padding: 6px 10px; font-size: 12px; border-width: 1.5px; }
+
+    table { width:100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow:hidden; border:1px solid var(--line); }
+    thead th { text-align:left; padding: 12px 14px; font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color: rgba(26,20,16,.6); border-bottom:1px solid var(--line); font-family:'IBM Plex Mono', monospace; font-weight:600; }
+    tbody td { padding: 12px 14px; border-top: 1px solid var(--line); vertical-align: top; font-size: 14px; }
+    tbody tr:hover { background: rgba(0,0,0,.02); }
+    .thumb { width:48px; height:48px; border-radius:8px; background: var(--accent); display:flex; align-items:center; justify-content:center; font-family:'Noto Serif HK', serif; font-weight:800; font-size:22px; color: var(--ink); flex-shrink:0; }
+    .row { display:flex; gap:10px; align-items:center; }
+    .name { font-weight:700; font-size: 15px; }
+    .sub { font-size: 11px; opacity:0.6; margin-top: 2px; }
+    .tags { display:flex; gap:4px; margin-top: 4px; }
+    .tag { font-family:'IBM Plex Mono', monospace; font-size:9px; font-weight:700; text-transform:uppercase; padding: 2px 6px; border-radius: 4px; }
+    .tag.signature { background: var(--ink); color: var(--bg); }
+    .tag.hot { background: var(--primary); color: #fff; }
+    .tag.new { background: var(--accent); color: var(--ink); }
+    .price { font-family:'IBM Plex Mono', monospace; font-weight:700; color: var(--primary); font-size:15px; }
+    .cat-chip { display:inline-block; font-size:11px; padding: 3px 8px; border-radius: 999px; background: var(--bg-soft); font-weight:600; }
+
+    .modal-overlay { position:fixed; inset:0; background: rgba(26,20,16,.5); display:flex; align-items:center; justify-content:center; z-index:100; padding: 20px; }
+    .modal { background: var(--bg); border-radius: 16px; max-width: 600px; width:100%; max-height: 90vh; overflow:auto; padding: 28px; }
+    .modal h2 { margin: 0 0 18px; font-size: 22px; font-weight:800; }
+    .field { margin-bottom: 14px; }
+    .field label { display:block; font-size:11px; text-transform:uppercase; letter-spacing:1.5px; font-family:'IBM Plex Mono', monospace; font-weight:600; opacity:0.7; margin-bottom:6px; }
+    .field input, .field textarea, .field select { width:100%; padding: 10px 14px; border:1px solid var(--line); background: var(--card); border-radius:8px; font:inherit; outline:none; }
+    .field input:focus, .field textarea:focus { border-color: var(--ink); }
+    .field-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top: 22px; padding-top: 16px; border-top:1px solid var(--line); }
+    .tag-toggle { display:flex; gap:8px; flex-wrap:wrap; }
+    .tag-toggle button { padding: 6px 12px; border: 1.5px solid var(--line); background: transparent; border-radius: 999px; cursor:pointer; font-size:12px; font-weight:600; font:inherit; }
+    .tag-toggle button.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+    .stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 22px; }
+    .stat { background: var(--card); border:1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+    .stat .k { font-family:'IBM Plex Mono', monospace; font-size:10px; text-transform:uppercase; opacity:0.55; letter-spacing:1.5px; }
+    .stat .v { font-size: 28px; font-weight:800; margin-top:4px; font-family:'IBM Plex Mono', monospace; }
+    .stat .delta { font-size:11px; opacity:0.6; margin-top:2px; }
+
+    .empty { text-align:center; padding: 60px 20px; opacity:0.55; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="crumb">CHAKEE 0823 · BACK OFFICE</div>
+      <h1 class="serif">後台管理 · 餐點</h1>
+    </div>
+    <nav style="display:flex; gap:6px; align-items:center;">
+      <a href="order.html">點餐</a>
+      <a href="admin.html" class="active">餐點</a>
+      <a href="kitchen.html">廚房</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="stats" id="stats"></div>
+
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="搜尋餐點 (中文 / English)">
+      <select id="catFilter">
+        <option value="all">全部分類</option>
+        <option value="main">主菜</option>
+        <option value="drinks">飲品</option>
+        <option value="dessert">甜品</option>
+      </select>
+      <button class="btn ghost" id="resetBtn" title="還原至預設餐單">↻ 還原</button>
+      <button class="btn accent" id="addBtn">＋ 新增餐點</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:60px">#</th>
+          <th>餐點</th>
+          <th style="width:90px">分類</th>
+          <th style="width:80px">售價</th>
+          <th style="width:120px">標籤</th>
+          <th style="width:120px">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div id="empty" class="empty" style="display:none">冇符合條件嘅餐點</div>
+  </main>
+
+  <div id="modalRoot"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="data.jsx"></script>
+
+  <script type="text/babel">
+    // Wait for data.jsx to populate window.ITEMS — it's loaded with type="text/babel" so it runs after Babel.
+    const CAT_LABEL = { main: '主菜', drinks: '飲品', dessert: '甜品' };
+    const TAG_OPTS = ['signature', 'hot', 'new'];
+    const TAG_LABEL = { signature: '招牌', hot: '熱賣', new: '新品' };
+
+    let editing = null; // current item being edited, or { __new: true } for new
+
+    function getItemsLocal() {
+      return window.getItems ? window.getItems() : (window.ITEMS || []);
+    }
+
+    function render() {
+      const items = getItemsLocal();
+      const q = document.getElementById('q').value.trim().toLowerCase();
+      const cat = document.getElementById('catFilter').value;
+      const filtered = items.filter(it => {
+        if (cat !== 'all' && it.cat !== cat) return false;
+        if (q) {
+          const hay = (it.name['zh-TW']+it.name.en+it.name['zh-CN']).toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = '';
+      filtered.forEach((it, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="mono" style="opacity:.5">${it.id}</td>
+          <td>
+            <div class="row">
+              <div class="thumb">${it.name['zh-TW'].slice(0,1)}</div>
+              <div>
+                <div class="name">${escapeHTML(it.name['zh-TW'])} <span style="opacity:.5;font-weight:500;font-size:12px;margin-left:6px">${escapeHTML(it.name.en)}</span></div>
+                <div class="sub">${escapeHTML(it.sub['zh-TW'] || '')}</div>
+                <div class="tags">${(it.tags||[]).map(t => `<span class="tag ${t}">${TAG_LABEL[t]||t}</span>`).join('')}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="cat-chip">${CAT_LABEL[it.cat] || it.cat}</span></td>
+          <td><span class="price">$${it.price}</span></td>
+          <td class="mono" style="font-size:11px; opacity:.7">${(it.tags||[]).join(', ') || '—'}</td>
+          <td>
+            <button class="btn sm ghost" data-edit="${it.id}">編輯</button>
+            <button class="btn sm danger" data-del="${it.id}">刪除</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('empty').style.display = filtered.length ? 'none' : 'block';
+
+      // Stats
+      const stats = document.getElementById('stats');
+      const avg = items.length ? Math.round(items.reduce((s,i)=>s+i.price,0) / items.length) : 0;
+      const hotCount = items.filter(i => (i.tags||[]).length).length;
+      const orders = (window.getOrders ? window.getOrders() : []);
+      stats.innerHTML = `
+        <div class="stat"><div class="k">餐點總數</div><div class="v">${items.length}</div><div class="delta">${items.filter(i=>i.cat==='main').length} 主菜 · ${items.filter(i=>i.cat==='drinks').length} 飲品 · ${items.filter(i=>i.cat==='dessert').length} 甜品</div></div>
+        <div class="stat"><div class="k">平均單價</div><div class="v">$${avg}</div></div>
+        <div class="stat"><div class="k">有標籤餐點</div><div class="v">${hotCount}</div><div class="delta">招牌 / 熱賣 / 新品</div></div>
+        <div class="stat"><div class="k">今日訂單</div><div class="v">${orders.length}</div><div class="delta">localStorage 模擬</div></div>
+      `;
+
+      // Wire row buttons
+      tbody.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEdit(b.dataset.edit));
+      tbody.querySelectorAll('[data-del]').forEach(b => b.onclick = () => doDelete(b.dataset.del));
+    }
+
+    function escapeHTML(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+    function openEdit(id) {
+      const items = getItemsLocal();
+      const it = items.find(x => x.id === id);
+      if (!it) return;
+      editing = JSON.parse(JSON.stringify(it));
+      renderModal();
+    }
+
+    function openAdd() {
+      editing = {
+        __new: true,
+        id: 'x' + Math.random().toString(36).slice(2,7),
+        cat: 'main', price: 50, tags: [],
+        name: { 'zh-TW':'', 'zh-CN':'', en:'' },
+        sub:  { 'zh-TW':'', 'zh-CN':'', en:'' },
+        desc: { 'zh-TW':'', 'zh-CN':'', en:'' },
+        custom: [],
+      };
+      renderModal();
+    }
+
+    function doDelete(id) {
+      if (!confirm('確定刪除呢個餐點?')) return;
+      const items = getItemsLocal().filter(x => x.id !== id);
+      window.saveMenu(items);
+      render();
+    }
+
+    function saveEdit() {
+      const items = getItemsLocal().slice();
+      if (editing.__new) {
+        delete editing.__new;
+        items.push(editing);
+      } else {
+        const idx = items.findIndex(x => x.id === editing.id);
+        if (idx >= 0) items[idx] = editing;
+      }
+      window.saveMenu(items);
+      editing = null;
+      renderModal();
+      render();
+    }
+
+    function renderModal() {
+      const root = document.getElementById('modalRoot');
+      if (!editing) { root.innerHTML = ''; return; }
+      const e = editing;
+      root.innerHTML = `
+        <div class="modal-overlay" id="overlay">
+          <div class="modal" onclick="event.stopPropagation()">
+            <h2 class="serif">${e.__new ? '新增餐點' : '編輯餐點'} <span class="mono" style="font-size:13px; opacity:.4">${e.id}</span></h2>
+
+            <div class="field-grid">
+              <div class="field"><label>分類</label>
+                <select id="f-cat">
+                  <option value="main" ${e.cat==='main'?'selected':''}>主菜</option>
+                  <option value="drinks" ${e.cat==='drinks'?'selected':''}>飲品</option>
+                  <option value="dessert" ${e.cat==='dessert'?'selected':''}>甜品</option>
+                </select>
+              </div>
+              <div class="field"><label>售價 (HKD)</label><input type="number" id="f-price" value="${e.price}" min="0"></div>
+            </div>
+
+            <div class="field"><label>名稱 (繁中)</label><input id="f-name-tw" value="${escapeHTML(e.name['zh-TW'])}"></div>
+            <div class="field-grid">
+              <div class="field"><label>名稱 (简中)</label><input id="f-name-cn" value="${escapeHTML(e.name['zh-CN'])}"></div>
+              <div class="field"><label>Name (EN)</label><input id="f-name-en" value="${escapeHTML(e.name.en)}"></div>
+            </div>
+
+            <div class="field"><label>副標題 (繁中)</label><input id="f-sub-tw" value="${escapeHTML(e.sub['zh-TW'])}"></div>
+            <div class="field-grid">
+              <div class="field"><label>副標題 (简中)</label><input id="f-sub-cn" value="${escapeHTML(e.sub['zh-CN'])}"></div>
+              <div class="field"><label>Subtitle (EN)</label><input id="f-sub-en" value="${escapeHTML(e.sub.en)}"></div>
+            </div>
+
+            <div class="field"><label>詳細描述 (繁中)</label><textarea id="f-desc-tw" rows="2">${escapeHTML(e.desc['zh-TW'])}</textarea></div>
+
+            <div class="field"><label>標籤</label>
+              <div class="tag-toggle" id="f-tags">
+                ${TAG_OPTS.map(t => `<button data-tag="${t}" class="${(e.tags||[]).includes(t)?'on':''}">${TAG_LABEL[t]}</button>`).join('')}
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button class="btn ghost" id="cancelBtn">取消</button>
+              <button class="btn" id="saveBtn">保存</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('overlay').onclick = () => { editing = null; renderModal(); };
+      document.getElementById('cancelBtn').onclick = () => { editing = null; renderModal(); };
+      document.getElementById('saveBtn').onclick = () => {
+        editing.cat = document.getElementById('f-cat').value;
+        editing.price = Number(document.getElementById('f-price').value) || 0;
+        editing.name['zh-TW'] = document.getElementById('f-name-tw').value;
+        editing.name['zh-CN'] = document.getElementById('f-name-cn').value || editing.name['zh-TW'];
+        editing.name.en      = document.getElementById('f-name-en').value || editing.name['zh-TW'];
+        editing.sub['zh-TW'] = document.getElementById('f-sub-tw').value;
+        editing.sub['zh-CN'] = document.getElementById('f-sub-cn').value || editing.sub['zh-TW'];
+        editing.sub.en      = document.getElementById('f-sub-en').value || editing.sub['zh-TW'];
+        const d = document.getElementById('f-desc-tw').value;
+        editing.desc = { 'zh-TW': d, 'zh-CN': d, en: d };
+        saveEdit();
+      };
+      document.querySelectorAll('#f-tags [data-tag]').forEach(b => {
+        b.onclick = () => {
+          const t = b.dataset.tag;
+          editing.tags = editing.tags || [];
+          if (editing.tags.includes(t)) editing.tags = editing.tags.filter(x => x !== t);
+          else editing.tags.push(t);
+          renderModal();
+        };
+      });
+    }
+
+    // Reset / search / add
+    document.getElementById('q').oninput = render;
+    document.getElementById('catFilter').onchange = render;
+    document.getElementById('addBtn').onclick = openAdd;
+    document.getElementById('resetBtn').onclick = () => {
+      if (!confirm('還原至預設餐單?所有 admin 改動會清除。')) return;
+      window.resetMenu(); render();
+    };
+
+    // Wait for data.jsx (Babel-transpiled) to finish exporting helpers
+    function waitReady() {
+      if (window.saveMenu && window.getItems) render();
+      else setTimeout(waitReady, 50);
+    }
+    waitReady();
+  </script>
+</body>
+</html>

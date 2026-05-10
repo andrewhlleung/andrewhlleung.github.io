@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <title>廚房訂單 · 茶記 0823</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;500;600;700;800&family=Noto+Serif+HK:wght@700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0F1014; --bg-soft: #1B1D24; --ink: #FFFCE6; --primary: #E7FF52; --accent: #FF6B35;
+      --card: #1B1D24; --line: #2A2D38;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; }
+    body { background: var(--bg); color: var(--ink); font-family:'Noto Sans HK', system-ui, sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; }
+    .mono { font-family:'IBM Plex Mono', monospace; }
+    .serif { font-family:'Noto Serif HK', serif; }
+
+    header { padding: 18px 28px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; background: var(--bg); position:sticky; top:0; z-index:10; }
+    header h1 { margin:0; font-size:22px; font-weight:800; letter-spacing:-0.5px; }
+    header .crumb { font-family:'IBM Plex Mono', monospace; font-size:10px; opacity:0.55; letter-spacing:2px; }
+    header .live { display:inline-flex; align-items:center; gap:7px; font-family:'IBM Plex Mono', monospace; font-size:11px; padding: 5px 10px; border-radius:999px; background: rgba(231,255,82,.12); color: var(--primary); }
+    header .live::before { content:''; width:7px; height:7px; border-radius:50%; background: var(--primary); animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity:1 } 50% { opacity:.3 } }
+    nav a { color: var(--ink); text-decoration:none; font-family:'IBM Plex Mono', monospace; font-size:12px; padding: 7px 13px; border:1.5px solid transparent; border-radius:999px; }
+    nav a:hover { border-color: var(--ink); }
+    nav a.active { background: var(--ink); color: var(--bg); }
+
+    .stats { display:flex; gap:12px; padding: 18px 28px 4px; flex-wrap:wrap; }
+    .stat { background: var(--card); border:1px solid var(--line); border-radius:12px; padding: 12px 16px; }
+    .stat .k { font-family:'IBM Plex Mono', monospace; font-size:10px; opacity:0.6; text-transform:uppercase; letter-spacing:1.5px; }
+    .stat .v { font-family:'IBM Plex Mono', monospace; font-size:24px; font-weight:800; margin-top:2px; }
+    .stat.warn .v { color: var(--accent); }
+    .stat.ok .v { color: var(--primary); }
+
+    main { padding: 18px 28px 60px; }
+    .columns { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .col { background: var(--card); border:1px solid var(--line); border-radius: 14px; padding: 14px 14px 18px; min-height: 400px; }
+    .col h2 { margin: 0 0 12px; font-size:13px; text-transform:uppercase; font-family:'IBM Plex Mono', monospace; letter-spacing:2px; display:flex; align-items:center; justify-content:space-between; }
+    .col .count { background: var(--bg); color: var(--ink); padding: 2px 8px; border-radius: 999px; font-size:11px; font-weight:700; }
+
+    .order { background: var(--bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
+    .order.new { border-color: var(--primary); }
+    .order .top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+    .order .ono { font-family:'IBM Plex Mono', monospace; font-size:18px; font-weight:800; color: var(--primary); }
+    .order .meta { font-family:'IBM Plex Mono', monospace; font-size:10px; opacity:0.55; letter-spacing:1px; }
+    .order .row { display:flex; justify-content:space-between; padding:5px 0; font-size:13px; border-bottom:1px dashed var(--line); }
+    .order .row:last-of-type { border-bottom:0; }
+    .order .row .name { font-weight:600; }
+    .order .row .sel { font-size:10px; opacity:0.55; margin-top:2px; font-family:'IBM Plex Mono', monospace; }
+    .order .row .qty { font-family:'IBM Plex Mono', monospace; font-weight:700; flex-shrink:0; margin-left:10px; }
+    .order .bot { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); gap:8px; }
+    .order .tags { display:flex; gap:4px; flex-wrap:wrap; font-family:'IBM Plex Mono', monospace; font-size:10px; }
+    .tag-mode { background: var(--bg-soft); padding:2px 6px; border-radius:4px; text-transform:uppercase; letter-spacing:1px; }
+    .tag-mode.takeout { background: var(--accent); color: var(--bg); }
+    .tag-mode.dine { background: var(--primary); color: var(--bg); }
+    .tag-mode.cash { border:1px solid var(--line); }
+
+    .btn { padding: 7px 12px; font:inherit; font-weight:700; border:1.5px solid var(--ink); background: transparent; color: var(--ink); border-radius:8px; cursor:pointer; font-size:12px; }
+    .btn.primary { background: var(--primary); color: var(--bg); border-color: var(--primary); }
+    .btn.danger  { color: var(--accent); border-color: var(--accent); }
+
+    .empty { padding: 60px 0; text-align:center; opacity:0.4; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+    .notes { margin-top:6px; font-size:11px; color: var(--accent); font-style:italic; }
+    .age { font-family:'IBM Plex Mono', monospace; font-size:11px; opacity:0.6; }
+    .age.old { color: var(--accent); }
+    .age.urgent { color: var(--accent); font-weight:700; }
+    .clear-row { padding: 14px 28px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="crumb">CHAKEE 0823 · KITCHEN DISPLAY</div>
+      <h1 class="serif">廚房訂單面板</h1>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <span class="live">LIVE · 每 2 秒更新</span>
+      <nav style="display:flex; gap:4px;">
+        <a href="order.html">點餐</a>
+        <a href="admin.html">餐點</a>
+        <a href="kitchen.html" class="active">廚房</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <main>
+    <div class="columns" id="board"></div>
+  </main>
+
+  <div class="clear-row" style="text-align:right;">
+    <button class="btn danger" onclick="if(confirm('清除所有訂單記錄?')){localStorage.removeItem('chakee_orders'); refresh();}">清除所有訂單</button>
+  </div>
+
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="data.jsx"></script>
+  <script>
+    const CAT_LABEL = { main: '主菜', drinks: '飲品', dessert: '甜品' };
+    const STATUS_COLS = [
+      { key: 'new',     label: '新單 NEW',         color: 'var(--primary)' },
+      { key: 'cooking', label: '製作中 COOKING',   color: 'var(--accent)' },
+      { key: 'done',    label: '已完成 DONE',      color: 'var(--ink)' },
+    ];
+
+    function loadOrders() {
+      try { return JSON.parse(localStorage.getItem('chakee_orders') || '[]'); }
+      catch(e) { return []; }
+    }
+    function setStatus(ts, status) {
+      const all = loadOrders();
+      const next = all.map(o => o.ts === ts ? { ...o, status } : o);
+      localStorage.setItem('chakee_orders', JSON.stringify(next));
+      refresh();
+    }
+    function deleteOrder(ts) {
+      const all = loadOrders().filter(o => o.ts !== ts);
+      localStorage.setItem('chakee_orders', JSON.stringify(all));
+      refresh();
+    }
+
+    function ago(ts) {
+      const s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+      if (s < 60) return s + 's';
+      return Math.floor(s/60) + 'm ' + (s%60) + 's';
+    }
+    function ageClass(ts) {
+      const s = (Date.now() - ts) / 1000;
+      if (s > 600) return 'urgent';
+      if (s > 300) return 'old';
+      return '';
+    }
+
+    function summarize(item, sel) {
+      if (!item || !sel || !item.custom) return '';
+      const parts = [];
+      for (const g of item.custom) {
+        const v = sel[g.id];
+        if (g.multi && Array.isArray(v)) {
+          v.forEach(id => { const o = g.opts.find(o => o.id === id); if (o) parts.push(o.label['zh-TW']); });
+        } else if (v) {
+          const o = g.opts.find(o => o.id === v);
+          if (o && (g.required ? o.id !== g.opts[0].id : true)) parts.push(o.label['zh-TW']);
+        }
+      }
+      return parts.join(' · ');
+    }
+
+    function renderOrderCard(o) {
+      const items = window.getItems ? window.getItems() : (window.ITEMS || []);
+      const isNew = o.status === 'new';
+      const itemRows = (o.items || []).map(line => {
+        const it = items.find(i => i.id === line.itemId);
+        if (!it) return '';
+        const sub = summarize(it, line.sel);
+        return `
+          <div class="row">
+            <div>
+              <div class="name">${escapeHTML(it.name['zh-TW'])}</div>
+              ${sub ? `<div class="sel">${escapeHTML(sub)}</div>` : ''}
+            </div>
+            <div class="qty">×${line.qty}</div>
+          </div>
+        `;
+      }).join('');
+
+      const modeTag = o.diningMode === 'takeout'
+        ? `<span class="tag-mode takeout">外賣</span>`
+        : `<span class="tag-mode dine">堂食 #${o.tableNo}</span>`;
+      const payTag = o.payment === 'cash'
+        ? `<span class="tag-mode cash">現金</span>`
+        : `<span class="tag-mode">線上</span>`;
+
+      let actionBtns = '';
+      if (o.status === 'new') {
+        actionBtns = `<button class="btn primary" onclick="setStatus(${o.ts}, 'cooking')">開始製作 →</button>`;
+      } else if (o.status === 'cooking') {
+        actionBtns = `<button class="btn primary" onclick="setStatus(${o.ts}, 'done')">完成 ✓</button>`;
+      } else {
+        actionBtns = `<button class="btn" onclick="deleteOrder(${o.ts})">移除</button>`;
+      }
+
+      return `
+        <div class="order ${isNew ? 'new' : ''}">
+          <div class="top">
+            <div class="ono">#${o.orderNo}</div>
+            <div class="meta">${o.time} · <span class="age ${ageClass(o.ts)}">${ago(o.ts)}</span></div>
+          </div>
+          ${itemRows}
+          ${o.notes ? `<div class="notes">⚠ ${escapeHTML(o.notes)}</div>` : ''}
+          <div class="bot">
+            <div class="tags">${modeTag} ${payTag} <span class="mono" style="opacity:.6">$${Math.round(o.total)}</span></div>
+            ${actionBtns}
+          </div>
+        </div>
+      `;
+    }
+
+    function escapeHTML(s) { return String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+    function refresh() {
+      const orders = loadOrders();
+      const today = orders.length;
+      const newCount = orders.filter(o => o.status === 'new').length;
+      const cookingCount = orders.filter(o => o.status === 'cooking').length;
+      const doneCount = orders.filter(o => o.status === 'done').length;
+      const revenue = orders.filter(o => o.status === 'done').reduce((s,o) => s + (o.total || 0), 0);
+
+      document.getElementById('stats').innerHTML = `
+        <div class="stat"><div class="k">今日訂單</div><div class="v">${today}</div></div>
+        <div class="stat warn"><div class="k">待處理</div><div class="v">${newCount + cookingCount}</div></div>
+        <div class="stat ok"><div class="k">已完成</div><div class="v">${doneCount}</div></div>
+        <div class="stat"><div class="k">已完成營收</div><div class="v">$${Math.round(revenue)}</div></div>
+      `;
+
+      const board = document.getElementById('board');
+      board.innerHTML = STATUS_COLS.map(col => {
+        const ords = orders.filter(o => o.status === col.key);
+        return `
+          <div class="col">
+            <h2><span style="color:${col.color}">${col.label}</span><span class="count">${ords.length}</span></h2>
+            ${ords.length ? ords.map(renderOrderCard).join('') : '<div class="empty">沒有訂單</div>'}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function waitReady() {
+      if (window.getItems) { refresh(); setInterval(refresh, 2000); }
+      else setTimeout(waitReady, 50);
+    }
+    waitReady();
+  </script>
+</body>
+</html>

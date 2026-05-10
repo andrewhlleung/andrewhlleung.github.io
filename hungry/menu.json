@@ -1,0 +1,1670 @@
+[
+  {
+    "id": "m1",
+    "cat": "main",
+    "price": 78,
+    "tags": [
+      "signature",
+      "hot"
+    ],
+    "name": {
+      "zh-TW": "乾炒牛河",
+      "zh-CN": "干炒牛河",
+      "en": "Beef Ho Fun"
+    },
+    "sub": {
+      "zh-TW": "鑊氣十足 · 嫩滑牛肉",
+      "zh-CN": "镬气十足 · 嫩滑牛肉",
+      "en": "Stir-fried flat rice noodles, wok-charred beef"
+    },
+    "desc": {
+      "zh-TW": "師傅大火快炒,牛肉滑嫩、河粉條條分明、豉油香氣撲鼻。",
+      "zh-CN": "师傅大火快炒,牛肉滑嫩、河粉条条分明、豉油香气扑鼻。",
+      "en": "Tossed over high flame, tender beef, smoky soy aroma."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加配",
+          "zh-CN": "加配",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "egg",
+            "label": {
+              "zh-TW": "加蛋",
+              "zh-CN": "加蛋",
+              "en": "Extra egg"
+            },
+            "price": 5
+          },
+          {
+            "id": "rice",
+            "label": {
+              "zh-TW": "加底",
+              "zh-CN": "加底",
+              "en": "Extra rice"
+            },
+            "price": 6
+          },
+          {
+            "id": "cheese",
+            "label": {
+              "zh-TW": "加芝士",
+              "zh-CN": "加芝士",
+              "en": "Add cheese"
+            },
+            "price": 8
+          },
+          {
+            "id": "noOnion",
+            "label": {
+              "zh-TW": "走青/蔥",
+              "zh-CN": "走青/葱",
+              "en": "No green onion"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m2",
+    "cat": "main",
+    "price": 72,
+    "tags": [
+      "hot"
+    ],
+    "name": {
+      "zh-TW": "焗豬扒飯",
+      "zh-CN": "焗猪扒饭",
+      "en": "Baked Pork Chop Rice"
+    },
+    "sub": {
+      "zh-TW": "茄汁芝士 · 香脆豬扒",
+      "zh-CN": "茄汁芝士 · 香脆猪扒",
+      "en": "Crispy pork chop, tomato sauce, melted cheese"
+    },
+    "desc": {
+      "zh-TW": "炸到金黃嘅豬扒,鋪上炒蛋粒飯,焗到芝士拉絲。",
+      "zh-CN": "炸到金黄的猪扒,铺上炒蛋粒饭,焗到芝士拉丝。",
+      "en": "Crispy pork chop over egg fried rice, baked with cheese."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加配",
+          "zh-CN": "加配",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "egg",
+            "label": {
+              "zh-TW": "加蛋",
+              "zh-CN": "加蛋",
+              "en": "Extra egg"
+            },
+            "price": 5
+          },
+          {
+            "id": "rice",
+            "label": {
+              "zh-TW": "加底",
+              "zh-CN": "加底",
+              "en": "Extra rice"
+            },
+            "price": 6
+          },
+          {
+            "id": "cheese",
+            "label": {
+              "zh-TW": "加芝士",
+              "zh-CN": "加芝士",
+              "en": "Add cheese"
+            },
+            "price": 8
+          },
+          {
+            "id": "noOnion",
+            "label": {
+              "zh-TW": "走青/蔥",
+              "zh-CN": "走青/葱",
+              "en": "No green onion"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m3",
+    "cat": "main",
+    "price": 68,
+    "tags": [],
+    "name": {
+      "zh-TW": "揚州炒飯",
+      "zh-CN": "扬州炒饭",
+      "en": "Yangzhou Fried Rice"
+    },
+    "sub": {
+      "zh-TW": "蝦仁叉燒 · 粒粒分明",
+      "zh-CN": "虾仁叉烧 · 粒粒分明",
+      "en": "Shrimp, char siu, egg"
+    },
+    "desc": {
+      "zh-TW": "經典做法,蝦仁、叉燒、青豆同蛋粒齊飛。",
+      "zh-CN": "经典做法,虾仁、叉烧、青豆和蛋粒齐飞。",
+      "en": "Classic: shrimp, char siu, peas and egg."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加配",
+          "zh-CN": "加配",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "egg",
+            "label": {
+              "zh-TW": "加蛋",
+              "zh-CN": "加蛋",
+              "en": "Extra egg"
+            },
+            "price": 5
+          },
+          {
+            "id": "rice",
+            "label": {
+              "zh-TW": "加底",
+              "zh-CN": "加底",
+              "en": "Extra rice"
+            },
+            "price": 6
+          },
+          {
+            "id": "cheese",
+            "label": {
+              "zh-TW": "加芝士",
+              "zh-CN": "加芝士",
+              "en": "Add cheese"
+            },
+            "price": 8
+          },
+          {
+            "id": "noOnion",
+            "label": {
+              "zh-TW": "走青/蔥",
+              "zh-CN": "走青/葱",
+              "en": "No green onion"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m4",
+    "cat": "main",
+    "price": 58,
+    "tags": [
+      "signature"
+    ],
+    "name": {
+      "zh-TW": "雲吞麵",
+      "zh-CN": "云吞面",
+      "en": "Wonton Noodles"
+    },
+    "sub": {
+      "zh-TW": "蝦肉雲吞 · 大地魚湯底",
+      "zh-CN": "虾肉云吞 · 大地鱼汤底",
+      "en": "Shrimp wontons, flounder broth"
+    },
+    "desc": {
+      "zh-TW": "手包蝦雲吞,配傳統大地魚熬製湯底,彈牙幼麵。",
+      "zh-CN": "手包虾云吞,配传统大地鱼熬制汤底,弹牙幼面。",
+      "en": "Hand-wrapped shrimp wontons in dried flounder broth."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m5",
+    "cat": "main",
+    "price": 48,
+    "tags": [],
+    "name": {
+      "zh-TW": "餐肉蛋公仔麵",
+      "zh-CN": "餐肉蛋公仔面",
+      "en": "Spam & Egg Noodles"
+    },
+    "sub": {
+      "zh-TW": "早餐之王 · 午餐肉煎蛋",
+      "zh-CN": "早餐之王 · 午餐肉煎蛋",
+      "en": "Spam, fried egg, instant noodles"
+    },
+    "desc": {
+      "zh-TW": "茶記永恆組合,公仔麵浸湯,煎到香脆嘅午餐肉同流心煎蛋。",
+      "zh-CN": "茶记永恒组合,公仔面浸汤,煎到香脆的午餐肉和流心煎蛋。",
+      "en": "Eternal cha chaan teng combo: noodles, crispy spam, runny egg."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加配",
+          "zh-CN": "加配",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "egg",
+            "label": {
+              "zh-TW": "加蛋",
+              "zh-CN": "加蛋",
+              "en": "Extra egg"
+            },
+            "price": 5
+          },
+          {
+            "id": "rice",
+            "label": {
+              "zh-TW": "加底",
+              "zh-CN": "加底",
+              "en": "Extra rice"
+            },
+            "price": 6
+          },
+          {
+            "id": "cheese",
+            "label": {
+              "zh-TW": "加芝士",
+              "zh-CN": "加芝士",
+              "en": "Add cheese"
+            },
+            "price": 8
+          },
+          {
+            "id": "noOnion",
+            "label": {
+              "zh-TW": "走青/蔥",
+              "zh-CN": "走青/葱",
+              "en": "No green onion"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m6",
+    "cat": "main",
+    "price": 82,
+    "tags": [
+      "new"
+    ],
+    "name": {
+      "zh-TW": "滑蛋蝦仁飯",
+      "zh-CN": "滑蛋虾仁饭",
+      "en": "Shrimp & Egg Rice"
+    },
+    "sub": {
+      "zh-TW": "彈牙鮮蝦 · 滑嫩蛋汁",
+      "zh-CN": "弹牙鲜虾 · 滑嫩蛋汁",
+      "en": "Plump shrimp, silky egg gravy"
+    },
+    "desc": {
+      "zh-TW": "鮮蝦同滑蛋淋上白飯,蛋汁包裹每一粒米。",
+      "zh-CN": "鲜虾和滑蛋淋上白饭,蛋汁包裹每一粒米。",
+      "en": "Shrimp in silky egg gravy over rice."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加配",
+          "zh-CN": "加配",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "egg",
+            "label": {
+              "zh-TW": "加蛋",
+              "zh-CN": "加蛋",
+              "en": "Extra egg"
+            },
+            "price": 5
+          },
+          {
+            "id": "rice",
+            "label": {
+              "zh-TW": "加底",
+              "zh-CN": "加底",
+              "en": "Extra rice"
+            },
+            "price": 6
+          },
+          {
+            "id": "cheese",
+            "label": {
+              "zh-TW": "加芝士",
+              "zh-CN": "加芝士",
+              "en": "Add cheese"
+            },
+            "price": 8
+          },
+          {
+            "id": "noOnion",
+            "label": {
+              "zh-TW": "走青/蔥",
+              "zh-CN": "走青/葱",
+              "en": "No green onion"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m7",
+    "cat": "main",
+    "price": 88,
+    "tags": [
+      "signature"
+    ],
+    "name": {
+      "zh-TW": "燒味雙拼飯",
+      "zh-CN": "烧味双拼饭",
+      "en": "BBQ Duo Rice"
+    },
+    "sub": {
+      "zh-TW": "叉燒燒鴨 · 兩款任揀",
+      "zh-CN": "叉烧烧鸭 · 两款任挑",
+      "en": "Pick two: char siu, roast duck, soy chicken"
+    },
+    "desc": {
+      "zh-TW": "即日新鮮燒味,任揀兩款配白飯及青菜。",
+      "zh-CN": "即日新鲜烧味,任挑两款配白饭及青菜。",
+      "en": "Daily fresh roasts, two of your choice over rice."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "m8",
+    "cat": "main",
+    "price": 62,
+    "tags": [
+      "hot"
+    ],
+    "name": {
+      "zh-TW": "星洲炒米",
+      "zh-CN": "星洲炒米",
+      "en": "Singapore Rice Noodles"
+    },
+    "sub": {
+      "zh-TW": "咖喱香 · 微辣可選",
+      "zh-CN": "咖喱香 · 微辣可选",
+      "en": "Curry powder, shrimp, BBQ pork"
+    },
+    "desc": {
+      "zh-TW": "咖喱粉炒米粉,蝦仁、叉燒同青椒,愛辣可加辣。",
+      "zh-CN": "咖喱粉炒米粉,虾仁、叉烧和青椒,爱辣可加辣。",
+      "en": "Curry-tossed rice vermicelli with shrimp, char siu, peppers."
+    },
+    "custom": [
+      {
+        "id": "portion",
+        "required": true,
+        "label": {
+          "zh-TW": "份量",
+          "zh-CN": "份量",
+          "en": "Portion"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "lrg",
+            "label": {
+              "zh-TW": "加大",
+              "zh-CN": "加大",
+              "en": "Large"
+            },
+            "price": 8
+          }
+        ]
+      },
+      {
+        "id": "spice",
+        "required": false,
+        "label": {
+          "zh-TW": "辣度",
+          "zh-CN": "辣度",
+          "en": "Spice"
+        },
+        "opts": [
+          {
+            "id": "0",
+            "label": {
+              "zh-TW": "不辣",
+              "zh-CN": "不辣",
+              "en": "None"
+            },
+            "price": 0
+          },
+          {
+            "id": "1",
+            "label": {
+              "zh-TW": "小辣",
+              "zh-CN": "小辣",
+              "en": "Mild"
+            },
+            "price": 0
+          },
+          {
+            "id": "2",
+            "label": {
+              "zh-TW": "中辣",
+              "zh-CN": "中辣",
+              "en": "Medium"
+            },
+            "price": 0
+          },
+          {
+            "id": "3",
+            "label": {
+              "zh-TW": "大辣",
+              "zh-CN": "大辣",
+              "en": "Hot"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d1",
+    "cat": "drinks",
+    "price": 22,
+    "tags": [
+      "signature",
+      "hot"
+    ],
+    "name": {
+      "zh-TW": "凍檸茶",
+      "zh-CN": "冻柠茶",
+      "en": "Iced Lemon Tea"
+    },
+    "sub": {
+      "zh-TW": "七片真檸檬",
+      "zh-CN": "七片真柠檬",
+      "en": "Seven slices of real lemon"
+    },
+    "desc": {
+      "zh-TW": "錫蘭紅茶配新鮮檸檬,可以自己 chuck 多陣。",
+      "zh-CN": "锡兰红茶配新鲜柠檬,可以自己 chuck 多阵。",
+      "en": "Ceylon black tea with fresh lemon — chuck it yourself."
+    },
+    "custom": [
+      {
+        "id": "ice",
+        "required": true,
+        "label": {
+          "zh-TW": "冰量",
+          "zh-CN": "冰量",
+          "en": "Ice"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少冰",
+              "zh-CN": "少冰",
+              "en": "Less ice"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走冰",
+              "zh-CN": "走冰",
+              "en": "No ice"
+            },
+            "price": 2
+          }
+        ]
+      },
+      {
+        "id": "sugar",
+        "required": true,
+        "label": {
+          "zh-TW": "糖度",
+          "zh-CN": "糖度",
+          "en": "Sugar"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少甜",
+              "zh-CN": "少甜",
+              "en": "Less"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走甜",
+              "zh-CN": "走甜",
+              "en": "No sugar"
+            },
+            "price": 0
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加料",
+          "zh-CN": "加料",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "pearl",
+            "label": {
+              "zh-TW": "加珍珠",
+              "zh-CN": "加珍珠",
+              "en": "Tapioca pearls"
+            },
+            "price": 6
+          },
+          {
+            "id": "milk",
+            "label": {
+              "zh-TW": "加奶",
+              "zh-CN": "加奶",
+              "en": "Extra milk"
+            },
+            "price": 3
+          },
+          {
+            "id": "lemon",
+            "label": {
+              "zh-TW": "加檸檬",
+              "zh-CN": "加柠檬",
+              "en": "Extra lemon"
+            },
+            "price": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d2",
+    "cat": "drinks",
+    "price": 22,
+    "tags": [
+      "signature"
+    ],
+    "name": {
+      "zh-TW": "港式奶茶",
+      "zh-CN": "港式奶茶",
+      "en": "HK Milk Tea"
+    },
+    "sub": {
+      "zh-TW": "絲襪奶茶 · 香滑濃郁",
+      "zh-CN": "丝袜奶茶 · 香滑浓郁",
+      "en": "Silk-stocking milk tea, smooth and rich"
+    },
+    "desc": {
+      "zh-TW": "混合三款茶葉,以絲襪反覆撞茶,加淡奶調出順滑口感。",
+      "zh-CN": "混合三款茶叶,以丝袜反复撞茶,加淡奶调出顺滑口感。",
+      "en": "Three-blend tea pulled through silk stocking, with evaporated milk."
+    },
+    "custom": [
+      {
+        "id": "temp",
+        "required": true,
+        "label": {
+          "zh-TW": "冷熱",
+          "zh-CN": "冷热",
+          "en": "Temperature"
+        },
+        "opts": [
+          {
+            "id": "hot",
+            "label": {
+              "zh-TW": "熱",
+              "zh-CN": "热",
+              "en": "Hot"
+            },
+            "price": 0
+          },
+          {
+            "id": "cold",
+            "label": {
+              "zh-TW": "凍 (+$3)",
+              "zh-CN": "冻 (+$3)",
+              "en": "Iced (+$3)"
+            },
+            "price": 3
+          }
+        ]
+      },
+      {
+        "id": "sugar",
+        "required": true,
+        "label": {
+          "zh-TW": "糖度",
+          "zh-CN": "糖度",
+          "en": "Sugar"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少甜",
+              "zh-CN": "少甜",
+              "en": "Less"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走甜",
+              "zh-CN": "走甜",
+              "en": "No sugar"
+            },
+            "price": 0
+          }
+        ]
+      },
+      {
+        "id": "extras",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加料",
+          "zh-CN": "加料",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "pearl",
+            "label": {
+              "zh-TW": "加珍珠",
+              "zh-CN": "加珍珠",
+              "en": "Tapioca pearls"
+            },
+            "price": 6
+          },
+          {
+            "id": "milk",
+            "label": {
+              "zh-TW": "加奶",
+              "zh-CN": "加奶",
+              "en": "Extra milk"
+            },
+            "price": 3
+          },
+          {
+            "id": "lemon",
+            "label": {
+              "zh-TW": "加檸檬",
+              "zh-CN": "加柠檬",
+              "en": "Extra lemon"
+            },
+            "price": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d3",
+    "cat": "drinks",
+    "price": 25,
+    "tags": [
+      "hot"
+    ],
+    "name": {
+      "zh-TW": "鴛鴦",
+      "zh-CN": "鸳鸯",
+      "en": "Yuenyeung"
+    },
+    "sub": {
+      "zh-TW": "咖啡 + 奶茶",
+      "zh-CN": "咖啡 + 奶茶",
+      "en": "Coffee + milk tea"
+    },
+    "desc": {
+      "zh-TW": "七成奶茶三成咖啡,口感層次分明,香港味道。",
+      "zh-CN": "七成奶茶三成咖啡,口感层次分明,香港味道。",
+      "en": "70% milk tea, 30% coffee — quintessentially HK."
+    },
+    "custom": [
+      {
+        "id": "temp",
+        "required": true,
+        "label": {
+          "zh-TW": "冷熱",
+          "zh-CN": "冷热",
+          "en": "Temperature"
+        },
+        "opts": [
+          {
+            "id": "hot",
+            "label": {
+              "zh-TW": "熱",
+              "zh-CN": "热",
+              "en": "Hot"
+            },
+            "price": 0
+          },
+          {
+            "id": "cold",
+            "label": {
+              "zh-TW": "凍 (+$3)",
+              "zh-CN": "冻 (+$3)",
+              "en": "Iced (+$3)"
+            },
+            "price": 3
+          }
+        ]
+      },
+      {
+        "id": "sugar",
+        "required": true,
+        "label": {
+          "zh-TW": "糖度",
+          "zh-CN": "糖度",
+          "en": "Sugar"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少甜",
+              "zh-CN": "少甜",
+              "en": "Less"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走甜",
+              "zh-CN": "走甜",
+              "en": "No sugar"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d4",
+    "cat": "drinks",
+    "price": 24,
+    "tags": [],
+    "name": {
+      "zh-TW": "阿華田",
+      "zh-CN": "阿华田",
+      "en": "Ovaltine"
+    },
+    "sub": {
+      "zh-TW": "童年回憶",
+      "zh-CN": "童年回忆",
+      "en": "Childhood in a cup"
+    },
+    "desc": {
+      "zh-TW": "麥芽朱古力香,熱凍俱佳。",
+      "zh-CN": "麦芽朱古力香,热冻俱佳。",
+      "en": "Malty chocolate goodness."
+    },
+    "custom": [
+      {
+        "id": "temp",
+        "required": true,
+        "label": {
+          "zh-TW": "冷熱",
+          "zh-CN": "冷热",
+          "en": "Temperature"
+        },
+        "opts": [
+          {
+            "id": "hot",
+            "label": {
+              "zh-TW": "熱",
+              "zh-CN": "热",
+              "en": "Hot"
+            },
+            "price": 0
+          },
+          {
+            "id": "cold",
+            "label": {
+              "zh-TW": "凍 (+$3)",
+              "zh-CN": "冻 (+$3)",
+              "en": "Iced (+$3)"
+            },
+            "price": 3
+          }
+        ]
+      },
+      {
+        "id": "sugar",
+        "required": true,
+        "label": {
+          "zh-TW": "糖度",
+          "zh-CN": "糖度",
+          "en": "Sugar"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少甜",
+              "zh-CN": "少甜",
+              "en": "Less"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走甜",
+              "zh-CN": "走甜",
+              "en": "No sugar"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d5",
+    "cat": "drinks",
+    "price": 24,
+    "tags": [],
+    "name": {
+      "zh-TW": "好立克",
+      "zh-CN": "好立克",
+      "en": "Horlicks"
+    },
+    "sub": {
+      "zh-TW": "麥精飲料",
+      "zh-CN": "麦精饮料",
+      "en": "Maltable warmth"
+    },
+    "desc": {
+      "zh-TW": "濃郁麥精,飲完瞓得好。",
+      "zh-CN": "浓郁麦精,饮完睡得好。",
+      "en": "Comforting malted milk drink."
+    },
+    "custom": [
+      {
+        "id": "temp",
+        "required": true,
+        "label": {
+          "zh-TW": "冷熱",
+          "zh-CN": "冷热",
+          "en": "Temperature"
+        },
+        "opts": [
+          {
+            "id": "hot",
+            "label": {
+              "zh-TW": "熱",
+              "zh-CN": "热",
+              "en": "Hot"
+            },
+            "price": 0
+          },
+          {
+            "id": "cold",
+            "label": {
+              "zh-TW": "凍 (+$3)",
+              "zh-CN": "冻 (+$3)",
+              "en": "Iced (+$3)"
+            },
+            "price": 3
+          }
+        ]
+      },
+      {
+        "id": "sugar",
+        "required": true,
+        "label": {
+          "zh-TW": "糖度",
+          "zh-CN": "糖度",
+          "en": "Sugar"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少甜",
+              "zh-CN": "少甜",
+              "en": "Less"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走甜",
+              "zh-CN": "走甜",
+              "en": "No sugar"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d6",
+    "cat": "drinks",
+    "price": 26,
+    "tags": [
+      "new"
+    ],
+    "name": {
+      "zh-TW": "鹹檸七",
+      "zh-CN": "咸柠七",
+      "en": "Salty Lime 7-Up"
+    },
+    "sub": {
+      "zh-TW": "醃檸檬 · 七喜",
+      "zh-CN": "腌柠檬 · 七喜",
+      "en": "Salted lime + 7-Up"
+    },
+    "desc": {
+      "zh-TW": "醃過嘅鹹檸檬加七喜,鹹中帶酸甜,夏天救星。",
+      "zh-CN": "腌过的咸柠檬加七喜,咸中带酸甜,夏天救星。",
+      "en": "Preserved salty lime in 7-Up — summer saviour."
+    },
+    "custom": [
+      {
+        "id": "ice",
+        "required": true,
+        "label": {
+          "zh-TW": "冰量",
+          "zh-CN": "冰量",
+          "en": "Ice"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少冰",
+              "zh-CN": "少冰",
+              "en": "Less ice"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走冰",
+              "zh-CN": "走冰",
+              "en": "No ice"
+            },
+            "price": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d7",
+    "cat": "drinks",
+    "price": 28,
+    "tags": [
+      "hot"
+    ],
+    "name": {
+      "zh-TW": "紅豆冰",
+      "zh-CN": "红豆冰",
+      "en": "Red Bean Ice"
+    },
+    "sub": {
+      "zh-TW": "煉奶碎冰 · 大粒紅豆",
+      "zh-CN": "炼奶碎冰 · 大粒红豆",
+      "en": "Crushed ice, condensed milk, red beans"
+    },
+    "desc": {
+      "zh-TW": "煉奶淋住碎冰,底層大粒紅豆,茶記獨家味道。",
+      "zh-CN": "炼奶淋住碎冰,底层大粒红豆,茶记独家味道。",
+      "en": "Crushed ice, condensed milk, plump red beans at the bottom."
+    },
+    "custom": [
+      {
+        "id": "sugar",
+        "required": true,
+        "label": {
+          "zh-TW": "糖度",
+          "zh-CN": "糖度",
+          "en": "Sugar"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少甜",
+              "zh-CN": "少甜",
+              "en": "Less"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走甜",
+              "zh-CN": "走甜",
+              "en": "No sugar"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "d8",
+    "cat": "drinks",
+    "price": 18,
+    "tags": [],
+    "name": {
+      "zh-TW": "滾水蛋",
+      "zh-CN": "滚水蛋",
+      "en": "Hot Water Egg"
+    },
+    "sub": {
+      "zh-TW": "老一輩補品",
+      "zh-CN": "老一辈补品",
+      "en": "Old-school comfort drink"
+    },
+    "desc": {
+      "zh-TW": "滾水撞生雞蛋,加糖,簡單但暖胃。",
+      "zh-CN": "滚水撞生鸡蛋,加糖,简单但暖胃。",
+      "en": "Boiling water poured over raw egg + sugar."
+    },
+    "custom": [
+      {
+        "id": "sugar",
+        "required": true,
+        "label": {
+          "zh-TW": "糖度",
+          "zh-CN": "糖度",
+          "en": "Sugar"
+        },
+        "opts": [
+          {
+            "id": "reg",
+            "label": {
+              "zh-TW": "正常",
+              "zh-CN": "正常",
+              "en": "Regular"
+            },
+            "price": 0
+          },
+          {
+            "id": "less",
+            "label": {
+              "zh-TW": "少甜",
+              "zh-CN": "少甜",
+              "en": "Less"
+            },
+            "price": 0
+          },
+          {
+            "id": "no",
+            "label": {
+              "zh-TW": "走甜",
+              "zh-CN": "走甜",
+              "en": "No sugar"
+            },
+            "price": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "s1",
+    "cat": "dessert",
+    "price": 38,
+    "tags": [
+      "signature",
+      "hot"
+    ],
+    "name": {
+      "zh-TW": "西多士",
+      "zh-CN": "西多士",
+      "en": "French Toast"
+    },
+    "sub": {
+      "zh-TW": "花生醬 · 牛油糖漿",
+      "zh-CN": "花生酱 · 牛油糖浆",
+      "en": "Peanut butter, butter, syrup"
+    },
+    "desc": {
+      "zh-TW": "兩片麵包夾花生醬,蛋漿浸透油炸,鋪一塊牛油同糖漿。",
+      "zh-CN": "两片面包夹花生酱,蛋浆浸透油炸,铺一块牛油和糖浆。",
+      "en": "Peanut-butter-filled toast, deep fried, topped with butter & syrup."
+    },
+    "custom": []
+  },
+  {
+    "id": "s2",
+    "cat": "dessert",
+    "price": 12,
+    "tags": [
+      "signature"
+    ],
+    "name": {
+      "zh-TW": "蛋撻",
+      "zh-CN": "蛋挞",
+      "en": "Egg Tart"
+    },
+    "sub": {
+      "zh-TW": "即日新鮮焗",
+      "zh-CN": "即日新鲜焗",
+      "en": "Baked daily"
+    },
+    "desc": {
+      "zh-TW": "酥皮蛋撻,熱辣辣出爐。",
+      "zh-CN": "酥皮蛋挞,热辣辣出炉。",
+      "en": "Flaky crust, custard fresh from the oven."
+    },
+    "custom": []
+  },
+  {
+    "id": "s3",
+    "cat": "dessert",
+    "price": 14,
+    "tags": [],
+    "name": {
+      "zh-TW": "菠蘿包",
+      "zh-CN": "菠萝包",
+      "en": "Pineapple Bun"
+    },
+    "sub": {
+      "zh-TW": "加冰凍牛油 +$4",
+      "zh-CN": "加冰冻牛油 +$4",
+      "en": "Add cold butter +$4"
+    },
+    "desc": {
+      "zh-TW": "酥脆菠蘿皮,鬆軟麵包,加塊冷牛油更正。",
+      "zh-CN": "酥脆菠萝皮,松软面包,加块冷牛油更正。",
+      "en": "Crispy sweet crust, fluffy bread, butter slab optional."
+    },
+    "custom": [
+      {
+        "id": "butter",
+        "required": false,
+        "multi": true,
+        "label": {
+          "zh-TW": "加料",
+          "zh-CN": "加料",
+          "en": "Add-ons"
+        },
+        "opts": [
+          {
+            "id": "butter",
+            "label": {
+              "zh-TW": "加冰凍牛油",
+              "zh-CN": "加冰冻牛油",
+              "en": "Cold butter slab"
+            },
+            "price": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "s4",
+    "cat": "dessert",
+    "price": 28,
+    "tags": [],
+    "name": {
+      "zh-TW": "紅豆沙",
+      "zh-CN": "红豆沙",
+      "en": "Red Bean Soup"
+    },
+    "sub": {
+      "zh-TW": "陳皮 · 蓮子",
+      "zh-CN": "陈皮 · 莲子",
+      "en": "With tangerine peel & lotus seeds"
+    },
+    "desc": {
+      "zh-TW": "慢煮三小時,綿綿紅豆,陳皮香。",
+      "zh-CN": "慢煮三小时,绵绵红豆,陈皮香。",
+      "en": "Slow-simmered three hours, smooth and fragrant."
+    },
+    "custom": [
+      {
+        "id": "temp",
+        "required": true,
+        "label": {
+          "zh-TW": "冷熱",
+          "zh-CN": "冷热",
+          "en": "Temperature"
+        },
+        "opts": [
+          {
+            "id": "hot",
+            "label": {
+              "zh-TW": "熱",
+              "zh-CN": "热",
+              "en": "Hot"
+            },
+            "price": 0
+          },
+          {
+            "id": "cold",
+            "label": {
+              "zh-TW": "凍 (+$3)",
+              "zh-CN": "冻 (+$3)",
+              "en": "Iced (+$3)"
+            },
+            "price": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "s5",
+    "cat": "dessert",
+    "price": 42,
+    "tags": [
+      "new"
+    ],
+    "name": {
+      "zh-TW": "楊枝甘露",
+      "zh-CN": "杨枝甘露",
+      "en": "Mango Pomelo Sago"
+    },
+    "sub": {
+      "zh-TW": "泰國芒果 · 西米柚肉",
+      "zh-CN": "泰国芒果 · 西米柚肉",
+      "en": "Thai mango, sago, pomelo"
+    },
+    "desc": {
+      "zh-TW": "新鮮泰國芒果蓉,西米同柚肉,清新解暑。",
+      "zh-CN": "新鲜泰国芒果蓉,西米和柚肉,清新解暑。",
+      "en": "Fresh mango purée, sago pearls, pomelo. Cooling."
+    },
+    "custom": []
+  },
+  {
+    "id": "s6",
+    "cat": "dessert",
+    "price": 22,
+    "tags": [],
+    "name": {
+      "zh-TW": "豆腐花",
+      "zh-CN": "豆腐花",
+      "en": "Tofu Pudding"
+    },
+    "sub": {
+      "zh-TW": "黃糖漿",
+      "zh-CN": "黄糖浆",
+      "en": "With brown sugar syrup"
+    },
+    "desc": {
+      "zh-TW": "滑嫩豆腐花,淋上黃糖漿。",
+      "zh-CN": "滑嫩豆腐花,淋上黄糖浆。",
+      "en": "Silken tofu pudding with brown sugar syrup."
+    },
+    "custom": [
+      {
+        "id": "temp",
+        "required": true,
+        "label": {
+          "zh-TW": "冷熱",
+          "zh-CN": "冷热",
+          "en": "Temperature"
+        },
+        "opts": [
+          {
+            "id": "hot",
+            "label": {
+              "zh-TW": "熱",
+              "zh-CN": "热",
+              "en": "Hot"
+            },
+            "price": 0
+          },
+          {
+            "id": "cold",
+            "label": {
+              "zh-TW": "凍 (+$3)",
+              "zh-CN": "冻 (+$3)",
+              "en": "Iced (+$3)"
+            },
+            "price": 3
+          }
+        ]
+      }
+    ]
+  }
+]
