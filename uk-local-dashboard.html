@@ -320,6 +320,7 @@ body{
   flex-direction:column;
   justify-content:space-between;
   border:1px solid var(--line);
+  position:relative;
 }
 .alert-card.clear{ background:var(--green-dim); border-color:#b9cabb; }
 .alert-card.amber{ background:var(--amber-dim); border-color:#e2c485; }
@@ -465,6 +466,20 @@ body{
 .info-row-detail{ color:var(--ink-soft); padding-left:38px; line-height:1.4; }
 .transit-status.good{ color:var(--green); }
 .transit-status.bad{ color:var(--red); }
+
+/* Live (real API) data indicator */
+.live-badge{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#5fbf7a;
+  box-shadow:0 0 0 2px rgba(0,0,0,0.18);
+  animation:pulse 2s infinite;
+  z-index:5;
+}
 
 /* Demo data tag */
 .demo-tag{
@@ -775,7 +790,7 @@ body{
 }
 
 @media (prefers-reduced-motion: reduce){
-  .status-dot{ animation:none; }
+  .status-dot, .live-badge{ animation:none; }
 }
 </style>
 </head>
@@ -831,6 +846,7 @@ body{
   <!-- HERO: WEATHER/FLOOD ALERT -->
   <div class="hero-alert" data-block="alert">
     <div class="alert-card clear" id="alertCard">
+      <span class="live-badge" title="真實數據 · Live Data"></span>
       <div class="alert-top">
         <div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--ink-soft);text-transform:uppercase;">MET OFFICE · EA FLOOD</div>
@@ -849,6 +865,7 @@ body{
 
   <!-- WEATHER / UV / POLLEN -->
   <div class="card mod-3" data-block="weather">
+    <span class="live-badge" title="真實數據 · Live Data"></span>
     <h3>🌤 <span id="envHeaderText">環境與健康</span></h3>
     <div class="weather-now">
       <span class="weather-icon" id="wxIcon">🌤️</span>
@@ -867,6 +884,7 @@ body{
 
   <!-- ENERGY -->
   <div class="card mod-3" data-block="energy">
+    <span class="live-badge" title="真實數據 · Live Data"></span>
     <h3>⚡ <span id="energyHeaderText">Octopus 電價</span></h3>
     <div id="energyBody">
       <div class="price-now">
@@ -881,6 +899,7 @@ body{
 
   <!-- CRIME -->
   <div class="card mod-3" data-block="crime">
+    <span class="live-badge" title="真實數據 · Live Data"></span>
     <h3>👮 <span id="crimeHeaderText">社區治安</span></h3>
     <div class="crime-list" id="crimeList">
       <div class="loading-shimmer" id="crimeLoadingText">正在讀取 Police.uk 數據…</div>
@@ -889,6 +908,7 @@ body{
 
   <!-- SOLAR FORECAST -->
   <div class="card mod-3" data-block="solar">
+    <span class="live-badge" title="真實數據 · Live Data"></span>
     <h3>☀️ <span id="solarHeaderText">太陽能發電預測</span></h3>
     <div class="price-now">
       <div class="price-big" id="solarKwh">--</div>
@@ -901,6 +921,7 @@ body{
 
   <!-- POLLEN BREAKDOWN -->
   <div class="card mod-3" data-block="pollen">
+    <span class="live-badge" title="真實數據 · Live Data"></span>
     <h3>🌼 <span id="pollenHeaderText">花粉與空氣質素</span></h3>
     <div class="setting-hint" id="aqiLine" style="margin:0 0 8px;">PM2.5 --</div>
     <div id="pollenBreakdownList"></div>
@@ -976,6 +997,30 @@ body{
       <div class="setting-hint" id="hintPostcode">用於定位天氣、治安及淹水資料的所在位置。</div>
     </div>
 
+    <div class="panel-section-label" id="secElecRegionLabel">電力地區</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblElecRegion" for="settingElecRegion">Octopus 電力地區</label>
+      <select class="setting-select" id="settingElecRegion">
+        <option value="auto">自動（根據郵區判斷）</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+        <option value="G">G</option>
+        <option value="H">H</option>
+        <option value="J">J</option>
+        <option value="K">K</option>
+        <option value="L">L</option>
+        <option value="M">M</option>
+        <option value="N">N</option>
+        <option value="P">P</option>
+      </select>
+      <div class="setting-hint" id="hintElecRegion">決定使用哪個地區的電價，預設會根據郵區自動判斷。</div>
+      <div class="setting-hint" id="detectedRegionHint" style="margin-top:4px;"></div>
+    </div>
+
     <div class="panel-section-label" id="secBinLabel">垃圾收集</div>
     <div class="setting-row">
       <label class="setting-label" id="lblCouncil" for="settingCouncil">地方議會 Council</label>
@@ -1038,6 +1083,7 @@ let state = {
   council: '',
   station: '',
   solarKwp: 4,
+  dnoRegion: 'auto', // Octopus/DNO GSP region letter, or 'auto' to detect from postcode
   binCycleStart: new Date('2026-08-05'), // a known Wednesday
 };
 
@@ -1065,6 +1111,52 @@ const CRIME_ICONS = {
   'shoplifting':'🛍️', 'theft from the person':'👛', 'vehicle crime':'🚗',
   'violent crime':'👊', 'other crime':'⚠️'
 };
+
+// Approximate UK postcode-area → Octopus/DNO GSP region-letter mapping.
+// Best-effort from public DNO licence-area boundaries; edge cases near boundaries may be
+// inaccurate — a manual override is offered in Settings for exactly this reason.
+const REGION_AREA_MAP = {
+  A:['CB','CM','CO','IP','NR','SG','SS','AL','LU','MK','PE','NN'],
+  B:['DE','LE','LN','NG'],
+  C:['E','EC','N','NW','SE','SW','W','WC','BR','CR','DA','EN','HA','IG','KT','RM','SM','TW','UB','WD'],
+  D:['CH','LL','SY','CW'],
+  E:['B','CV','DY','HR','ST','TF','WR','WS','WV'],
+  F:['DH','DL','NE','SR','TS'],
+  G:['BB','BL','CA','FY','L','LA','M','OL','PR','SK','WN','WA'],
+  H:['BH','GU','HP','OX','PO','RG','SL','SO','SP'],
+  J:['BN','CT','ME','RH','TN'],
+  K:['CF','LD','NP','SA'],
+  L:['BA','BS','DT','EX','GL','PL','SN','TA','TQ','TR'],
+  M:['BD','DN','HD','HG','HU','HX','LS','S','WF','YO'],
+  N:['DG','EH','FK','G','KA','KY','ML','PA','TD'],
+  P:['AB','DD','IV','KW','PH','ZE','HS'],
+};
+const REGION_LETTERS = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P'];
+
+function detectOctopusRegion(postcode){
+  if (!postcode) return null;
+  const outward = postcode.trim().toUpperCase().split(' ')[0];
+  const areaMatch = outward.match(/^[A-Z]+/);
+  if (!areaMatch) return null;
+  const area = areaMatch[0];
+  for (const letter of REGION_LETTERS) {
+    if (REGION_AREA_MAP[letter].includes(area)) return letter;
+  }
+  return null;
+}
+
+function getEffectiveRegion(){
+  if (state.dnoRegion && state.dnoRegion !== 'auto') return state.dnoRegion;
+  return detectOctopusRegion(state.postcode) || 'C';
+}
+
+function updateDetectedRegionHint(){
+  const el = document.getElementById('detectedRegionHint');
+  if (!el) return;
+  const t = I18N[currentLang];
+  const letter = getEffectiveRegion();
+  el.textContent = t.detectedRegionText(letter, t.regionNames[letter] || letter);
+}
 
 // Weather condition → icon + sky gradient + text mode
 function getWeatherVisual(code, hour){
@@ -1099,9 +1191,12 @@ const I18N = {
     crimeHeader:'社區治安', crimeLoading:'正在讀取 Police.uk 數據…', crimeEmpty:'本月暫無記錄或資料未發布', crimeUnavailable:'Police.uk 資料暫時無法載入', crimeUnit:'宗',
     transportHeader:'交通即時狀況', transportDemoTag:'示範資料 · 尚未連接即時 API', transportOnTime:'準時', transportDelayed:m=>`誤點 ${m} 分鐘`,
     binScheduleHeader:'未來垃圾收集日程', binScheduleDemoTag:'示範排程 · 每週三黑桶／隔週三綠桶輪替',
-    footerSourcePrefix:'資料來源：', footerUpdatedPrefix:'最後更新：',
+    footerSourcePrefix:'資料來源：', footerUpdatedPrefix:'最後更新：', liveDataTooltip:'真實數據 · Live Data',
     panelBlocksTitle:'加減 Block', panelBlocksAvailable:'目前可用的模組', panelSettingsTitle:'Setting',
     secRegion:'地區設定', lblPostcode:'郵區 Postcode', hintPostcode:'用於定位天氣、治安及淹水資料的所在位置。',
+    secElecRegion:'電力地區', lblElecRegion:'Octopus 電力地區', hintElecRegion:'決定使用哪個地區的電價，預設會根據郵區自動判斷。',
+    regionAuto:'自動（根據郵區判斷）', detectedRegionText:(letter,name)=>`目前判斷：${name}（Region ${letter}）`,
+    regionNames:{A:'東英格蘭',B:'東米德蘭',C:'倫敦',D:'北威爾斯及默西賽德',E:'西米德蘭',F:'東北英格蘭',G:'西北英格蘭',H:'南英格蘭',J:'東南英格蘭',K:'南威爾斯',L:'西南英格蘭',M:'約克郡',N:'南蘇格蘭',P:'北蘇格蘭'},
     secBin:'垃圾收集', lblCouncil:'地方議會 Council', hintCouncil:'目前使用示範排程。填寫議會名稱後，未來可串接該會的實際收集日程。',
     secTransport:'交通', lblStation:'常用車站 / 地鐵站', hintStation:'用於未來串接 TfL 或 National Rail 即時誤點資料。',
     secLanguage:'語言 Language', lblLanguage:'介面語言', hintLanguage:'選擇儀表板的顯示語言，未來會加入更多語言。',
@@ -1158,9 +1253,12 @@ const I18N = {
     crimeHeader:'Local Crime', crimeLoading:'Loading Police.uk data…', crimeEmpty:'No records this month or data not yet published', crimeUnavailable:'Police.uk data unavailable right now', crimeUnit:'cases',
     transportHeader:'Live Transport', transportDemoTag:'Demo data · live API not yet connected', transportOnTime:'On time', transportDelayed:m=>`Delayed ${m} min`,
     binScheduleHeader:'Upcoming Bin Collections', binScheduleDemoTag:'Demo schedule · black bin weekly, green bin fortnightly, both on Wed',
-    footerSourcePrefix:'Data sources: ', footerUpdatedPrefix:'Last updated: ',
+    footerSourcePrefix:'Data sources: ', footerUpdatedPrefix:'Last updated: ', liveDataTooltip:'Live data · real API',
     panelBlocksTitle:'Modules', panelBlocksAvailable:'Available modules', panelSettingsTitle:'Settings',
     secRegion:'Location', lblPostcode:'Postcode', hintPostcode:'Used to locate weather, crime and flood data for your area.',
+    secElecRegion:'Electricity Region', lblElecRegion:'Octopus Electricity Region', hintElecRegion:'Determines which regional tariff is used. Defaults to auto-detect from your postcode.',
+    regionAuto:'Auto (detect from postcode)', detectedRegionText:(letter,name)=>`Detected: ${name} (Region ${letter})`,
+    regionNames:{A:'Eastern England',B:'East Midlands',C:'London',D:'North Wales & Merseyside',E:'West Midlands',F:'North East England',G:'North West England',H:'Southern England',J:'South East England',K:'South Wales',L:'South West England',M:'Yorkshire',N:'South Scotland',P:'North Scotland'},
     secBin:'Bin Collection', lblCouncil:'Local Council', hintCouncil:'Currently using a demo schedule. Enter your council name so real collection data can be connected later.',
     secTransport:'Transport', lblStation:'Usual Station / Stop', hintStation:'Used to connect live TfL or National Rail delay data in future.',
     secLanguage:'Language', lblLanguage:'Interface Language', hintLanguage:'Choose the dashboard display language — more languages coming soon.',
@@ -1217,9 +1315,12 @@ const I18N = {
     crimeHeader:'Przestępczość lokalna', crimeLoading:'Ładowanie danych Police.uk…', crimeEmpty:'Brak danych w tym miesiącu lub dane niepublikowane', crimeUnavailable:'Dane Police.uk chwilowo niedostępne', crimeUnit:'zdarz.',
     transportHeader:'Transport na żywo', transportDemoTag:'Dane demo · API na żywo niepodłączone', transportOnTime:'Punktualnie', transportDelayed:m=>`Opóźnienie ${m} min`,
     binScheduleHeader:'Nadchodzące odbiory śmieci', binScheduleDemoTag:'Harmonogram demo · czarny kosz co tydzień, zielony co dwa tygodnie, w środy',
-    footerSourcePrefix:'Źródła danych: ', footerUpdatedPrefix:'Ostatnia aktualizacja: ',
+    footerSourcePrefix:'Źródła danych: ', footerUpdatedPrefix:'Ostatnia aktualizacja: ', liveDataTooltip:'Dane na żywo · prawdziwe API',
     panelBlocksTitle:'Moduły', panelBlocksAvailable:'Dostępne moduły', panelSettingsTitle:'Ustawienia',
     secRegion:'Lokalizacja', lblPostcode:'Kod pocztowy', hintPostcode:'Używane do lokalizowania danych o pogodzie, przestępczości i powodziach.',
+    secElecRegion:'Region energetyczny', lblElecRegion:'Region Octopus', hintElecRegion:'Określa, jaka taryfa regionalna jest używana. Domyślnie wykrywana automatycznie z kodu pocztowego.',
+    regionAuto:'Automatycznie (z kodu pocztowego)', detectedRegionText:(letter,name)=>`Wykryto: ${name} (Region ${letter})`,
+    regionNames:{A:'Wschodnia Anglia',B:'East Midlands',C:'Londyn',D:'Płn. Walia i Merseyside',E:'West Midlands',F:'Płn.-wsch. Anglia',G:'Płn.-zach. Anglia',H:'Południowa Anglia',J:'Płd.-wsch. Anglia',K:'Południowa Walia',L:'Płd.-zach. Anglia',M:'Yorkshire',N:'Południowa Szkocja',P:'Północna Szkocja'},
     secBin:'Odbiór śmieci', lblCouncil:'Rada lokalna', hintCouncil:'Obecnie używany jest harmonogram demonstracyjny. Wpisz nazwę rady, aby połączyć rzeczywiste dane w przyszłości.',
     secTransport:'Transport', lblStation:'Zwykła stacja / przystanek', hintStation:'Używane do przyszłego połączenia z danymi TfL lub National Rail.',
     secLanguage:'Język', lblLanguage:'Język interfejsu', hintLanguage:'Wybierz język panelu — więcej języków wkrótce.',
@@ -1276,9 +1377,12 @@ const I18N = {
     crimeHeader:'Trosedd Lleol', crimeLoading:'Yn llwytho data Police.uk…', crimeEmpty:"Dim cofnodion y mis hwn neu ddata heb ei gyhoeddi", crimeUnavailable:'Data Police.uk ddim ar gael ar hyn o bryd', crimeUnit:'achos',
     transportHeader:'Trafnidiaeth Fyw', transportDemoTag:"Data demo · API byw heb ei gysylltu", transportOnTime:'Ar amser', transportDelayed:m=>`Oedi ${m} munud`,
     binScheduleHeader:'Casgliadau Biniau Nesaf', binScheduleDemoTag:"Amserlen demo · bin du bob wythnos, gwyrdd bob pythefnos, ddydd Mercher",
-    footerSourcePrefix:'Ffynonellau data: ', footerUpdatedPrefix:'Diweddarwyd ddiwethaf: ',
+    footerSourcePrefix:'Ffynonellau data: ', footerUpdatedPrefix:'Diweddarwyd ddiwethaf: ', liveDataTooltip:'Data byw · API go iawn',
     panelBlocksTitle:'Modiwlau', panelBlocksAvailable:'Modiwlau ar gael', panelSettingsTitle:'Gosodiadau',
     secRegion:'Lleoliad', lblPostcode:'Cod Post', hintPostcode:"Defnyddir i leoli data tywydd, trosedd a llifogydd ar gyfer eich ardal.",
+    secElecRegion:'Rhanbarth Trydan', lblElecRegion:'Rhanbarth Octopus', hintElecRegion:"Yn pennu pa dariff rhanbarthol a ddefnyddir. Diofyn yw canfod yn awtomatig o'ch cod post.",
+    regionAuto:'Awtomatig (o god post)', detectedRegionText:(letter,name)=>`Canfuwyd: ${name} (Rhanbarth ${letter})`,
+    regionNames:{A:'Dwyrain Lloegr',B:'East Midlands',C:'Llundain',D:'Gogledd Cymru a Glannau Mersi',E:'West Midlands',F:'Gogledd-ddwyrain Lloegr',G:'Gogledd-orllewin Lloegr',H:'De Lloegr',J:'De-ddwyrain Lloegr',K:'De Cymru',L:'De-orllewin Lloegr',M:'Swydd Efrog',N:"De'r Alban",P:'Gogledd yr Alban'},
     secBin:'Casglu Biniau', lblCouncil:'Cyngor Lleol', hintCouncil:"Ar hyn o bryd yn defnyddio amserlen demo. Rhowch enw'ch cyngor fel y gellir cysylltu data go iawn yn nes ymlaen.",
     secTransport:'Trafnidiaeth', lblStation:'Gorsaf / Safle Arferol', hintStation:"Defnyddir i gysylltu data oedi byw TfL neu National Rail yn y dyfodol.",
     secLanguage:'Iaith', lblLanguage:'Iaith y Rhyngwyneb', hintLanguage:"Dewiswch iaith arddangos y dangosfwrdd — mwy o ieithoedd yn dod cyn bo hir.",
@@ -1345,6 +1449,7 @@ function loadPersisted(){
     if (saved.council) state.council = saved.council;
     if (saved.station) state.station = saved.station;
     if (typeof saved.solarKwp === 'number') state.solarKwp = saved.solarKwp;
+    if (saved.dnoRegion) state.dnoRegion = saved.dnoRegion;
     if (saved.refreshMins) refreshMins = saved.refreshMins;
     if (typeof saved.darkMode === 'boolean') darkModeOn = saved.darkMode;
     if (saved.lang && I18N[saved.lang]) currentLang = saved.lang;
@@ -1356,7 +1461,7 @@ function persist(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       lat: state.lat, lon: state.lon, postcode: state.postcode,
-      council: state.council, station: state.station, solarKwp: state.solarKwp,
+      council: state.council, station: state.station, solarKwp: state.solarKwp, dnoRegion: state.dnoRegion,
       refreshMins, darkMode: darkModeOn, lang: currentLang, blockState
     }));
   }catch(e){}
@@ -1425,11 +1530,22 @@ function applyI18n(){
   set('binScheduleHeaderText', t.binScheduleHeader);
   set('binScheduleDemoTag', t.binScheduleDemoTag);
   set('footerSourceText', t.footerSourcePrefix + 'Open-Meteo · Environment Agency Flood API · Police.uk · Octopus Energy API');
+  document.querySelectorAll('.live-badge').forEach(el => { el.title = t.liveDataTooltip; });
   set('blocksPanelTitleText', t.panelBlocksTitle);
   set('settingsPanelTitleText', t.panelSettingsTitle);
   set('secRegionLabel', t.secRegion);
   set('lblPostcode', t.lblPostcode);
   set('hintPostcode', t.hintPostcode);
+  set('secElecRegionLabel', t.secElecRegion);
+  set('lblElecRegion', t.lblElecRegion);
+  set('hintElecRegion', t.hintElecRegion);
+  const elecRegionSelect = document.getElementById('settingElecRegion');
+  if (elecRegionSelect) {
+    Array.from(elecRegionSelect.options).forEach(opt => {
+      opt.textContent = opt.value === 'auto' ? t.regionAuto : `${opt.value} — ${t.regionNames[opt.value]}`;
+    });
+  }
+  updateDetectedRegionHint();
   set('secBinLabel', t.secBin);
   set('lblCouncil', t.lblCouncil);
   set('hintCouncil', t.hintCouncil);
@@ -1537,6 +1653,8 @@ document.getElementById('openSettingsItem').addEventListener('click', () => {
   document.getElementById('settingCouncil').value = state.council || '';
   document.getElementById('settingStation').value = state.station || '';
   document.getElementById('settingSolarCapacity').value = state.solarKwp || '';
+  document.getElementById('settingElecRegion').value = state.dnoRegion || 'auto';
+  updateDetectedRegionHint();
   document.getElementById('settingRefresh').value = String(refreshMins);
   document.getElementById('settingLanguage').value = currentLang;
   document.getElementById('settingDarkMode').classList.toggle('on', darkModeOn);
@@ -1568,6 +1686,7 @@ document.getElementById('settingsSave').addEventListener('click', async () => {
   state.station = document.getElementById('settingStation').value.trim();
   const kwpVal = parseFloat(document.getElementById('settingSolarCapacity').value);
   state.solarKwp = isNaN(kwpVal) ? state.solarKwp : kwpVal;
+  state.dnoRegion = document.getElementById('settingElecRegion').value;
   refreshMins = parseInt(document.getElementById('settingRefresh').value, 10);
 
   if (pcVal) {
@@ -1578,6 +1697,8 @@ document.getElementById('settingsSave').addEventListener('click', async () => {
     }
   }
 
+  updateDetectedRegionHint();
+  fetchEnergy();
   fetchSolar();
   renderTransit();
   renderMicroMobility();
@@ -1935,8 +2056,9 @@ async function fetchCrime(){
 async function fetchEnergy(){
   const t = I18N[currentLang];
   try{
-    // Public Octopus Agile rates endpoint (Eastern England region C as a common default)
-    const url = `https://api.octopus.energy/v1/products/AGILE-24-04-03/electricity-tariffs/E-1R-AGILE-24-04-03-C/standard-unit-rates/`;
+    // Public Octopus Agile rates endpoint — region letter resolved from postcode (or manual override)
+    const regionLetter = getEffectiveRegion();
+    const url = `https://api.octopus.energy/v1/products/AGILE-24-04-03/electricity-tariffs/E-1R-AGILE-24-04-03-${regionLetter}/standard-unit-rates/`;
     const res = await fetch(url);
     const data = await res.json();
     const rates = (data.results || []).slice().reverse(); // chronological
