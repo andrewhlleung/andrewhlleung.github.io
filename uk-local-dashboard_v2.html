@@ -1,0 +1,2307 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本區生活告示板</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@600;700;800&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root{
+  --paper:#EDEAE2;
+  --paper-dim:#E2DECF;
+  --ink:#1D2B36;
+  --ink-soft:#4A5A64;
+  --line:#C9C2AE;
+  --red:#C8102E;
+  --red-dim:#F4DADE;
+  --amber:#D89A2C;
+  --amber-dim:#F7E9CC;
+  --green:#2E5339;
+  --green-dim:#DCE6DD;
+  --card:#FBFAF6;
+  --shadow: 0 1px 0 rgba(29,43,54,0.06);
+  /* fixed "always dark" chrome — masthead / hero-bin / panel-head keep this look in both themes */
+  --chrome-bg:#1D2B36;
+  --chrome-text:#EDEAE2;
+  --chrome-text-soft:#4A5A64;
+}
+
+body.dark-mode{
+  --paper:#14181C;
+  --paper-dim:#1B2126;
+  --ink:#E7E4DC;
+  --ink-soft:#8B949B;
+  --line:#333B42;
+  --red-dim:#3A1E24;
+  --amber-dim:#332A18;
+  --green-dim:#182A1F;
+  --card:#1E2429;
+  --shadow: 0 1px 0 rgba(0,0,0,0.3);
+}
+body.dark-mode .alert-card.clear{ border-color:#2f4a37; }
+body.dark-mode .alert-card.amber{ border-color:#5c4a22; }
+body.dark-mode .alert-card.red{ border-color:#5c2733; }
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  background:var(--paper);
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(29,43,54,0.025) 40px);
+  color:var(--ink);
+  font-family:'Archivo', -apple-system, sans-serif;
+  min-height:100vh;
+  padding:0 0 24px 0;
+}
+
+/* ===== MASTHEAD ===== */
+.masthead{
+  background:var(--chrome-bg);
+  color:var(--chrome-text);
+  padding:14px 28px 12px;
+  border-bottom:6px solid var(--red);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.masthead-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  flex-wrap:wrap;
+  gap:14px;
+  max-width:1180px;
+  margin:0 auto;
+}
+.masthead h1{
+  font-family:'Archivo Expanded', sans-serif;
+  font-weight:800;
+  font-size:26px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+.masthead h1 span{ color:var(--amber); }
+.masthead-meta{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  color:#B9C2C7;
+}
+.pc-input{
+  background:transparent;
+  border:1px solid #46565f;
+  color:var(--chrome-text);
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  padding:6px 10px;
+  border-radius:3px;
+  width:110px;
+  text-transform:uppercase;
+}
+.pc-input:focus{ outline:2px solid var(--amber); border-color:var(--amber); }
+.pc-go{
+  background:var(--red);
+  color:#fff;
+  border:none;
+  font-family:'Archivo', sans-serif;
+  font-weight:600;
+  font-size:12px;
+  padding:7px 12px;
+  border-radius:3px;
+  cursor:pointer;
+  letter-spacing:0.3px;
+}
+.pc-go:hover{ background:#a80d24; }
+.lang-switch{ display:flex; gap:4px; }
+.lang-btn{
+  background:transparent;
+  border:1px solid #46565f;
+  color:var(--chrome-text);
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  font-weight:600;
+  padding:6px 9px;
+  border-radius:3px;
+  cursor:pointer;
+  letter-spacing:0.3px;
+}
+.lang-btn:hover{ border-color:var(--amber); }
+.lang-btn.active{ background:var(--amber); border-color:var(--amber); color:#1D2B36; }
+.clock{
+  font-family:'JetBrains Mono', monospace;
+  font-size:14px;
+  color:var(--chrome-text);
+  letter-spacing:0.5px;
+}
+.status-dot{
+  display:inline-block;
+  width:7px; height:7px;
+  border-radius:50%;
+  background:#5fbf7a;
+  margin-right:6px;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+/* ===== LAYOUT ===== */
+.board{
+  max-width:1180px;
+  margin:18px auto 0;
+  padding:0 28px;
+  display:grid;
+  grid-template-columns:repeat(12, 1fr);
+  gap:14px;
+}
+.eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.eyebrow::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:4px;
+  box-shadow:var(--shadow);
+  padding:16px 18px;
+  position:relative;
+  overflow:hidden;
+}
+.card h3{
+  font-family:'Archivo Expanded', sans-serif;
+  font-weight:700;
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:0.3px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* ===== HERO: BIN DAY ===== */
+.hero-bin{
+  grid-column:span 7;
+  background:var(--chrome-bg);
+  color:var(--chrome-text);
+  border-radius:6px;
+  padding:0;
+  display:flex;
+  align-items:stretch;
+  min-height:200px;
+  overflow:hidden;
+  border:1px solid var(--ink);
+}
+.bin-tear{
+  width:130px;
+  background:var(--chrome-text);
+  color:var(--chrome-bg);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border-right:2px dashed var(--line);
+  position:relative;
+  flex-shrink:0;
+}
+.bin-tear::before, .bin-tear::after{
+  content:'';
+  position:absolute;
+  width:16px; height:16px;
+  background:var(--chrome-bg);
+  border-radius:50%;
+  right:-9px;
+}
+.bin-tear::before{ top:-8px; }
+.bin-tear::after{ bottom:-8px; }
+.bin-tear .dow{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:1px;
+  color:var(--chrome-text-soft);
+  text-transform:uppercase;
+}
+.bin-tear .dom{
+  font-family:'Archivo Expanded', sans-serif;
+  font-weight:800;
+  font-size:52px;
+  line-height:1;
+  margin:4px 0;
+}
+.bin-tear .mon{
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  text-transform:uppercase;
+  color:var(--chrome-text-soft);
+}
+.bin-main{
+  flex:1;
+  padding:20px 24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:8px;
+}
+.bin-eyebrow{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:#9AABB3;
+}
+.bin-name{
+  font-family:'Archivo Expanded', sans-serif;
+  font-weight:800;
+  font-size:28px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  line-height:1.05;
+}
+.bin-swatch{
+  width:26px; height:34px;
+  border-radius:3px 3px 6px 6px;
+  flex-shrink:0;
+  border:2px solid rgba(255,255,255,0.25);
+}
+.bin-note{
+  font-size:13px;
+  color:#C7CFD3;
+  max-width:420px;
+  line-height:1.5;
+}
+.bin-countdown{
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  color:var(--amber);
+  margin-top:4px;
+}
+.bin-toggle{
+  position:absolute;
+  top:16px; right:16px;
+  display:flex;
+  gap:6px;
+}
+.bin-dot{
+  width:8px; height:8px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.2);
+}
+.bin-dot.active{ background:var(--amber); }
+
+/* ===== HERO: WEATHER/FLOOD ALERT ===== */
+.hero-alert{
+  grid-column:span 5;
+  border-radius:6px;
+  display:flex;
+  flex-direction:column;
+  min-height:200px;
+}
+.alert-card{
+  flex:1;
+  border-radius:6px;
+  padding:18px 20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  border:1px solid var(--line);
+  position:relative;
+}
+.alert-card.clear{ background:var(--green-dim); border-color:#b9cabb; }
+.alert-card.amber{ background:var(--amber-dim); border-color:#e2c485; }
+.alert-card.red{ background:var(--red-dim); border-color:#e5aab3; }
+.alert-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+.alert-badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  padding:4px 8px;
+  border-radius:3px;
+  font-weight:700;
+}
+.alert-badge.clear{ background:var(--green); color:#fff; }
+.alert-badge.amber{ background:var(--amber); color:#fff; }
+.alert-badge.red{ background:var(--red); color:#fff; }
+.alert-headline{
+  font-family:'Archivo Expanded', sans-serif;
+  font-weight:800;
+  font-size:22px;
+  margin-top:14px;
+  line-height:1.15;
+}
+.alert-sub{
+  font-size:13px;
+  color:var(--ink-soft);
+  margin-top:8px;
+  line-height:1.5;
+}
+.alert-stats{
+  display:flex;
+  gap:18px;
+  margin-top:16px;
+  padding-top:14px;
+  border-top:1px solid rgba(29,43,54,0.12);
+}
+.alert-stat .n{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:20px; }
+.alert-stat .l{ font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-soft); }
+
+/* ===== ROW: 3-up modules ===== */
+.mod-3{ grid-column:span 4; min-height:160px; }
+.mod-4{ grid-column:span 6; min-height:160px; }
+.mod-full{ grid-column:span 12; }
+
+/* Weather module */
+.weather-now{ display:flex; align-items:center; gap:14px; margin-bottom:10px; }
+.weather-icon{ font-size:36px; line-height:1; flex-shrink:0; }
+.weather-temp{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:38px; }
+.weather-desc{ font-size:13px; color:var(--ink-soft); }
+.uv-pollen-row{ display:flex; gap:10px; }
+.card.sky-dark-text h3, .card.sky-dark-text .weather-temp{ color:#1D2B36; }
+.card.sky-light-text h3, .card.sky-light-text .weather-temp{ color:#F5F7FA; }
+.card.sky-dark-text .weather-desc{ color:#3A4750; }
+.card.sky-light-text .weather-desc{ color:#E3E8ED; }
+.card.sky-dark-text .pill{ background:rgba(255,255,255,0.5); }
+.card.sky-light-text .pill{ background:rgba(255,255,255,0.14); }
+.card.sky-dark-text .pill .pl{ color:#3A4750; }
+.card.sky-light-text .pill .pl{ color:#D7DEE5; }
+.pill{
+  flex:1;
+  background:var(--paper-dim);
+  border-radius:4px;
+  padding:10px 12px;
+}
+.pill .pl{ font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-soft); }
+.pill .pv{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:18px; margin-top:2px; }
+.pill .pv.low{ color:var(--green); }
+.pill .pv.mid{ color:var(--amber); }
+.pill .pv.high{ color:var(--red); }
+
+/* Energy module */
+.price-now{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  margin-bottom:6px;
+}
+.price-big{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:32px; }
+.price-unit{ font-size:12px; color:var(--ink-soft); }
+.price-tag{
+  display:inline-block;
+  font-size:11px;
+  padding:3px 8px;
+  border-radius:3px;
+  font-weight:600;
+  margin-top:4px;
+}
+.price-tag.cheap{ background:var(--green-dim); color:var(--green); }
+.price-tag.mid{ background:var(--amber-dim); color:#8a6414; }
+.price-tag.exp{ background:var(--red-dim); color:var(--red); }
+.spark{ display:flex; align-items:flex-end; gap:2px; height:36px; margin-top:10px; }
+.spark-bar{ flex:1; background:var(--paper-dim); border-radius:1px 1px 0 0; min-height:2px; }
+.spark-bar.now{ background:var(--ink); }
+.spark-labels{ display:flex; justify-content:space-between; font-family:'JetBrains Mono', monospace; font-size:9px; color:var(--ink-soft); margin-top:4px; }
+
+/* Crime module */
+.crime-list{ display:flex; flex-direction:column; gap:10px; }
+.crime-row{ display:flex; justify-content:space-between; align-items:center; font-size:13px; padding-bottom:9px; border-bottom:1px solid var(--paper-dim); }
+.crime-row:last-child{ border-bottom:none; padding-bottom:0; }
+.crime-cat{ color:var(--ink); }
+.crime-n{ font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--ink-soft); }
+
+/* Pollen breakdown module */
+.pollen-row{ display:flex; align-items:center; font-size:12px; padding:6px 0; gap:10px; }
+.pollen-row .pr-label{ width:44px; flex-shrink:0; color:var(--ink-soft); }
+.pollen-row .pr-track{ flex:1; height:6px; background:var(--paper-dim); border-radius:3px; overflow:hidden; }
+.pollen-row .pr-fill{ height:100%; border-radius:3px; }
+.pollen-row .pr-fill.low{ background:var(--green); }
+.pollen-row .pr-fill.mid{ background:var(--amber); }
+.pollen-row .pr-fill.high{ background:var(--red); }
+.pollen-row .pr-value{ width:38px; flex-shrink:0; text-align:right; font-family:'JetBrains Mono', monospace; font-weight:700; }
+
+/* Transport module */
+.transit-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:7px 0;
+  border-bottom:1px solid var(--paper-dim);
+}
+.transit-row:last-child{ border-bottom:none; }
+.transit-line{ display:flex; align-items:center; gap:8px; font-size:12px; min-width:0; }
+.transit-line span:last-child{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.transit-badge{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  font-weight:700;
+  padding:3px 6px;
+  border-radius:3px;
+  color:#fff;
+  min-width:30px;
+  text-align:center;
+  flex-shrink:0;
+}
+.transit-status{ font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; flex-shrink:0; white-space:nowrap; }
+
+/* Two-line info row (roadworks / supermarket deals — longer detail text) */
+.info-row{ padding:8px 0; border-bottom:1px solid var(--paper-dim); font-size:12px; }
+.info-row:last-child{ border-bottom:none; padding-bottom:0; }
+.info-row-top{ display:flex; align-items:center; gap:8px; font-weight:600; margin-bottom:3px; }
+.info-row-detail{ color:var(--ink-soft); padding-left:38px; line-height:1.4; }
+.transit-status.good{ color:var(--green); }
+.transit-status.bad{ color:var(--red); }
+
+/* Data status badge — shows last-updated time (real API) or "demo data" label, top-right of each block */
+.status-badge{
+  position:absolute;
+  top:14px;
+  right:16px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  letter-spacing:0.3px;
+  padding:3px 8px;
+  border-radius:3px;
+  z-index:5;
+  white-space:nowrap;
+}
+.status-badge.live{
+  color:var(--green);
+  background:var(--green-dim);
+}
+.status-badge.demo{
+  color:var(--ink-soft);
+  background:var(--paper-dim);
+}
+.hero-bin .status-badge{
+  background:rgba(255,255,255,0.12);
+  color:var(--chrome-text);
+}
+
+/* Demo data tag */
+.demo-tag{
+  display:inline-block;
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  background:var(--paper-dim);
+  padding:3px 8px;
+  border-radius:3px;
+  margin-bottom:12px;
+}
+
+/* Bin schedule strip */
+.bin-strip{ display:flex; gap:8px; flex-wrap:wrap; }
+.bin-strip-item{
+  flex:1;
+  min-width:100px;
+  background:var(--paper-dim);
+  border-radius:4px;
+  padding:9px 10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.bin-strip-swatch{ width:12px; height:16px; border-radius:2px 2px 4px 4px; flex-shrink:0; }
+.bin-strip-item .bsi-date{ font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--ink-soft); }
+.bin-strip-item .bsi-dow{ font-family:'Archivo Expanded', sans-serif; font-weight:800; font-size:16px; line-height:1.2; }
+.bin-strip-item .bsi-name{ font-size:10.5px; margin-top:1px; line-height:1.3; }
+
+/* connect state */
+.connect-box{
+  border:1.5px dashed var(--line);
+  border-radius:4px;
+  padding:16px;
+  text-align:center;
+  color:var(--ink-soft);
+  font-size:12px;
+  line-height:1.6;
+}
+.connect-box code{
+  background:var(--paper-dim);
+  padding:1px 5px;
+  border-radius:3px;
+  font-family:'JetBrains Mono', monospace;
+}
+
+.footer-note{
+  max-width:1180px;
+  margin:18px auto 0;
+  padding:0 28px;
+  font-size:11px;
+  color:var(--ink-soft);
+  font-family:'JetBrains Mono', monospace;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.loading-shimmer{
+  color:var(--ink-soft);
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+}
+
+/* ===== MENU ICON + DROPDOWN ===== */
+.menu-wrap{ position:relative; }
+.menu-btn{
+  width:34px; height:34px;
+  border:1px solid #46565f;
+  background:transparent;
+  border-radius:3px;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:0;
+}
+.menu-btn span{
+  display:block;
+  width:16px; height:2px;
+  background:var(--chrome-text);
+  border-radius:1px;
+  transition:transform .18s ease, opacity .18s ease;
+}
+.menu-btn:hover span{ background:var(--amber); }
+.menu-btn.open span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+.menu-btn.open span:nth-child(2){ opacity:0; }
+.menu-btn.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+.menu-dropdown{
+  position:absolute;
+  top:44px; right:0;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:5px;
+  box-shadow:0 8px 24px rgba(29,43,54,0.18);
+  min-width:190px;
+  overflow:hidden;
+  z-index:200;
+  display:none;
+}
+.menu-dropdown.open{ display:block; }
+.menu-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  font-size:13px;
+  color:var(--ink);
+  cursor:pointer;
+  border-bottom:1px solid var(--paper-dim);
+  font-family:'Archivo', sans-serif;
+  font-weight:500;
+}
+.menu-item:last-child{ border-bottom:none; }
+.menu-item:hover{ background:var(--paper-dim); }
+.menu-item .mi-icon{
+  width:18px; text-align:center;
+  font-size:14px;
+}
+
+/* ===== SLIDE-OVER PANEL (shared by block manager + settings) ===== */
+.panel-overlay{
+  position:fixed; inset:0;
+  background:rgba(29,43,54,0.45);
+  z-index:300;
+  display:none;
+  opacity:0;
+  transition:opacity .2s ease;
+}
+.panel-overlay.open{ display:block; opacity:1; }
+.panel{
+  position:fixed;
+  top:0; right:0;
+  bottom:0;
+  width:380px;
+  max-width:92vw;
+  background:var(--paper);
+  border-left:1px solid var(--line);
+  z-index:301;
+  transform:translateX(100%);
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+  display:flex;
+  flex-direction:column;
+  box-shadow:-8px 0 30px rgba(29,43,54,0.15);
+}
+.panel.open{ transform:translateX(0); }
+.panel-head{
+  background:var(--chrome-bg);
+  color:var(--chrome-text);
+  padding:20px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:4px solid var(--amber);
+}
+.panel-head h2{
+  font-family:'Archivo Expanded', sans-serif;
+  font-weight:800;
+  font-size:16px;
+  text-transform:uppercase;
+  letter-spacing:0.3px;
+}
+.panel-close{
+  width:28px; height:28px;
+  border:none;
+  background:transparent;
+  color:var(--chrome-text);
+  font-size:18px;
+  cursor:pointer;
+  line-height:1;
+  border-radius:3px;
+}
+.panel-close:hover{ background:rgba(255,255,255,0.12); }
+.panel-body{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 22px;
+}
+.panel-section-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin:18px 0 10px;
+}
+.panel-section-label:first-child{ margin-top:0; }
+
+/* block manager rows */
+.block-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:12px 14px;
+  margin-bottom:8px;
+}
+.block-row-left{ display:flex; align-items:center; gap:10px; }
+.block-row-icon{ font-size:16px; width:20px; text-align:center; }
+.block-row-name{ font-size:13px; font-weight:600; }
+.block-row-desc{ font-size:11px; color:var(--ink-soft); margin-top:1px; }
+.block-toggle{
+  position:relative;
+  width:40px; height:22px;
+  border-radius:11px;
+  background:var(--line);
+  border:none;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:background .18s ease;
+}
+.block-toggle.on{ background:var(--green); }
+.block-toggle::after{
+  content:'';
+  position:absolute;
+  top:2px; left:2px;
+  width:18px; height:18px;
+  border-radius:50%;
+  background:#fff;
+  transition:transform .18s ease;
+  box-shadow:0 1px 2px rgba(0,0,0,0.25);
+}
+.block-toggle.on::after{ transform:translateX(18px); }
+.block-row.disabled{ opacity:0.55; }
+
+/* settings form */
+.setting-row{ margin-bottom:18px; }
+.setting-label{
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:6px;
+  display:block;
+}
+.setting-hint{
+  font-size:11px;
+  color:var(--ink-soft);
+  margin-top:5px;
+  line-height:1.5;
+}
+.setting-input, .setting-select{
+  width:100%;
+  padding:9px 11px;
+  border:1px solid var(--line);
+  border-radius:4px;
+  background:var(--card);
+  font-family:'Archivo', sans-serif;
+  font-size:13px;
+  color:var(--ink);
+}
+.setting-input:focus, .setting-select:focus{ outline:2px solid var(--amber); border-color:var(--amber); }
+.setting-toggle-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--paper-dim);
+}
+.setting-toggle-row:last-child{ border-bottom:none; }
+.panel-save{
+  width:100%;
+  background:var(--red);
+  color:#fff;
+  border:none;
+  font-family:'Archivo', sans-serif;
+  font-weight:700;
+  font-size:13px;
+  padding:12px;
+  border-radius:4px;
+  cursor:pointer;
+  margin-top:6px;
+  letter-spacing:0.3px;
+}
+.panel-save:hover{ background:#a80d24; }
+.panel-empty{
+  text-align:center;
+  color:var(--ink-soft);
+  font-size:12px;
+  padding:30px 10px;
+  line-height:1.6;
+}
+
+@media (max-width:900px){
+  .board{ grid-template-columns:repeat(6,1fr); }
+  .hero-bin{ grid-column:span 6; }
+  .hero-alert{ grid-column:span 6; }
+  .mod-3{ grid-column:span 3; }
+  .mod-4{ grid-column:span 6; }
+  .mod-full{ grid-column:span 6; }
+}
+@media (max-width:600px){
+  .board{ grid-template-columns:1fr; padding:0 16px; }
+  .hero-bin{ grid-column:1; flex-direction:column; min-height:auto; }
+  .bin-tear{ width:100%; flex-direction:row; gap:10px; border-right:none; border-bottom:2px dashed var(--line); padding:14px 0; }
+  .bin-tear::before,.bin-tear::after{ display:none; }
+  .hero-alert{ grid-column:1; }
+  .mod-3, .mod-4, .mod-full{ grid-column:1; }
+  .masthead-row{ flex-direction:column; align-items:flex-start; }
+  .panel{ width:100vw; max-width:100vw; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .status-dot{ animation:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-row">
+    <h1><span id="siteTitle">本區告示板</span> <span id="pcLabel">CV1</span></h1>
+    <div class="masthead-meta">
+      <span><span class="status-dot"></span><span id="liveStatus">即時更新中</span></span>
+      <span class="clock" id="clockDisplay">--:--:--</span>
+      <input class="pc-input" id="pcInput" placeholder="郵區 e.g. CV1" maxlength="8">
+      <button class="pc-go" id="pcGo">更新</button>
+      <div class="lang-switch" id="langSwitch">
+        <button class="lang-btn" data-lang="en" title="English">EN</button>
+        <button class="lang-btn" data-lang="zh" title="繁體中文">中</button>
+        <button class="lang-btn" data-lang="pl" title="Polski">PL</button>
+      </div>
+      <div class="menu-wrap">
+        <button class="menu-btn" id="menuBtn" aria-label="選單" aria-haspopup="true" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="menu-dropdown" id="menuDropdown">
+          <div class="menu-item" id="openBlocksItem"><span class="mi-icon">▦</span><span id="menuBlocksLabel">加減 Block</span></div>
+          <div class="menu-item" id="openSettingsItem"><span class="mi-icon">⚙</span><span id="menuSettingsLabel">Setting</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="board" id="board">
+
+  <!-- HERO: BIN COLLECTION -->
+  <div class="hero-bin" data-block="bin" style="position:relative;">
+    <span class="status-badge demo" id="badge-bin"></span>
+    <div class="bin-tear">
+      <div class="dow" id="binDow">週三</div>
+      <div class="dom" id="binDom">19</div>
+      <div class="mon" id="binMon">AUG</div>
+    </div>
+    <div class="bin-main">
+      <div class="bin-toggle" id="binToggle"></div>
+      <div class="bin-eyebrow" id="binEyebrow">明天請推出 · TOMORROW'S COLLECTION</div>
+      <div class="bin-name">
+        <span class="bin-swatch" id="binSwatch" style="background:#1D2B36;"></span>
+        <span id="binName">Black Bin（一般垃圾）</span>
+      </div>
+      <div class="bin-note" id="binNote">請於晚上放至路邊，收集時間約早上 6:30–8:00。逾期未推出將順延至下週。</div>
+      <div class="bin-countdown" id="binCountdown">▸ 距離收集尚有 18 小時</div>
+    </div>
+  </div>
+
+  <!-- HERO: WEATHER/FLOOD ALERT -->
+  <div class="hero-alert" data-block="alert">
+    <div class="alert-card clear" id="alertCard">
+      <span class="status-badge live" id="badge-alert"></span>
+      <div class="alert-top">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--ink-soft);text-transform:uppercase;">MET OFFICE · EA FLOOD</div>
+          <div class="alert-headline" id="alertHeadline">目前無天氣警報</div>
+        </div>
+        <span class="alert-badge clear" id="alertBadge">無警報</span>
+      </div>
+      <div class="alert-sub" id="alertSub">載入中央氣象局與環境局數據…</div>
+      <div class="alert-stats">
+        <div class="alert-stat"><div class="n" id="statTemp">--°</div><div class="l" id="statTempLabel">現時氣溫</div></div>
+        <div class="alert-stat"><div class="n" id="statRain">--%</div><div class="l" id="statRainLabel">降雨機率</div></div>
+        <div class="alert-stat"><div class="n" id="statFlood">--</div><div class="l" id="statFloodLabel">淹水警報</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEATHER / UV / POLLEN -->
+  <div class="card mod-3" data-block="weather">
+    <span class="status-badge live" id="badge-weather"></span>
+    <h3>🌤 <span id="envHeaderText">環境與健康</span></h3>
+    <div class="weather-now">
+      <span class="weather-icon" id="wxIcon">🌤️</span>
+      <div>
+        <div class="weather-temp" id="wxTemp">--°C</div>
+        <div class="weather-desc" id="wxDesc">載入中…</div>
+      </div>
+    </div>
+    <div class="uv-pollen-row">
+      <div class="pill">
+        <div class="pl" id="uvLabelText">UV 指數</div>
+        <div class="pv" id="uvVal">--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENERGY -->
+  <div class="card mod-3" data-block="energy">
+    <span class="status-badge live" id="badge-energy"></span>
+    <h3>⚡ <span id="energyHeaderText">Octopus 電價</span></h3>
+    <div id="energyBody">
+      <div class="price-now">
+        <div class="price-big" id="priceNow">--</div>
+        <div class="price-unit">p/kWh</div>
+      </div>
+      <span class="price-tag mid" id="priceTag">載入中</span>
+      <div class="spark" id="sparkBars"></div>
+      <div class="spark-labels"><span id="sparkNowLabel">現在</span><span>+12hr</span><span>+24hr</span></div>
+    </div>
+  </div>
+
+  <!-- CRIME -->
+  <div class="card mod-3" data-block="crime">
+    <span class="status-badge live" id="badge-crime"></span>
+    <h3>👮 <span id="crimeHeaderText">社區治安</span></h3>
+    <div class="crime-list" id="crimeList">
+      <div class="loading-shimmer" id="crimeLoadingText">正在讀取 Police.uk 數據…</div>
+    </div>
+  </div>
+
+  <!-- SOLAR FORECAST -->
+  <div class="card mod-3" data-block="solar">
+    <span class="status-badge live" id="badge-solar"></span>
+    <h3>☀️ <span id="solarHeaderText">太陽能發電預測</span></h3>
+    <div class="price-now">
+      <div class="price-big" id="solarKwh">--</div>
+      <div class="price-unit">kWh</div>
+    </div>
+    <div class="setting-hint" id="solarHintText" style="margin:0 0 10px;">今日預計發電量（估算）</div>
+    <div class="spark" id="solarSparkBars"></div>
+    <div class="spark-labels"><span>06:00</span><span>13:00</span><span>20:00</span></div>
+  </div>
+
+  <!-- POLLEN BREAKDOWN -->
+  <div class="card mod-3" data-block="pollen">
+    <span class="status-badge live" id="badge-pollen"></span>
+    <h3>🌼 <span id="pollenHeaderText">花粉與空氣質素</span></h3>
+    <div class="setting-hint" id="aqiLine" style="margin:0 0 8px;">PM2.5 --</div>
+    <div id="pollenBreakdownList"></div>
+  </div>
+
+  <!-- MICRO-MOBILITY -->
+  <div class="card mod-3" data-block="micro">
+    <span class="status-badge demo" id="badge-micro"></span>
+    <h3>🛴 <span id="microHeaderText">共享單車/滑板車</span></h3>
+    <div class="demo-tag" id="microDemoTag">示範資料</div>
+    <div id="microList"></div>
+  </div>
+
+  <!-- TRANSPORT -->
+  <div class="card mod-4" data-block="transport">
+    <span class="status-badge demo" id="badge-transport"></span>
+    <h3>🚉 <span id="transportHeaderText">交通即時狀況</span></h3>
+    <div class="demo-tag" id="transportDemoTag">示範資料 · 尚未連接即時 API</div>
+    <div id="transitList"></div>
+  </div>
+
+  <!-- BIN SCHEDULE STRIP -->
+  <div class="card mod-4" data-block="binSchedule">
+    <span class="status-badge demo" id="badge-binSchedule"></span>
+    <h3>🗑 <span id="binScheduleHeaderText">未來垃圾收集日程</span></h3>
+    <div class="demo-tag" id="binScheduleDemoTag">示範排程 · 每週三黑桶／隔週三綠桶輪替</div>
+    <div class="bin-strip" id="binStrip"></div>
+  </div>
+
+  <!-- SUPERMARKET REDUCED SECTION TIPS -->
+  <div class="card mod-4" data-block="deals">
+    <span class="status-badge demo" id="badge-deals"></span>
+    <h3>🏷️ <span id="dealsHeaderText">超市減價黃標時間</span></h3>
+    <div class="demo-tag" id="dealsTag">社區經驗參考 · 各分店略有不同</div>
+    <div id="dealsList"></div>
+  </div>
+
+  <!-- ROADWORKS & PARKING -->
+  <div class="card mod-4" data-block="roadworks">
+    <span class="status-badge demo" id="badge-roadworks"></span>
+    <h3>🚧 <span id="roadHeaderText">路面工程與泊車限制</span></h3>
+    <div class="demo-tag" id="roadDemoTag">示範資料 · 尚未連接道路數據</div>
+    <div id="roadList"></div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <span id="footerSourceText">資料來源：Open-Meteo · Environment Agency Flood API · Police.uk · Octopus Energy API</span>
+  <span id="lastUpdated">最後更新：--</span>
+</div>
+
+<!-- ===== OVERLAY (shared) ===== -->
+<div class="panel-overlay" id="panelOverlay"></div>
+
+<!-- ===== BLOCK MANAGER PANEL ===== -->
+<div class="panel" id="blocksPanel" role="dialog" aria-label="加減 Block">
+  <div class="panel-head">
+    <h2 id="blocksPanelTitleText">加減 Block</h2>
+    <button class="panel-close" id="blocksPanelClose" aria-label="關閉">✕</button>
+  </div>
+  <div class="panel-body" id="blocksPanelBody">
+    <!-- rows injected by JS -->
+  </div>
+</div>
+
+<!-- ===== SETTINGS PANEL ===== -->
+<div class="panel" id="settingsPanel" role="dialog" aria-label="Setting">
+  <div class="panel-head">
+    <h2 id="settingsPanelTitleText">Setting</h2>
+    <button class="panel-close" id="settingsPanelClose" aria-label="關閉">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="panel-section-label" id="secRegionLabel">地區設定</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblPostcode" for="settingPostcode">郵區 Postcode</label>
+      <input class="setting-input" id="settingPostcode" placeholder="e.g. CV1 1AA">
+      <div class="setting-hint" id="hintPostcode">用於定位天氣、治安及淹水資料的所在位置。</div>
+    </div>
+
+    <div class="panel-section-label" id="secElecRegionLabel">電力地區</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblElecRegion" for="settingElecRegion">Octopus 電力地區</label>
+      <select class="setting-select" id="settingElecRegion">
+        <option value="auto">自動（根據郵區判斷）</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+        <option value="G">G</option>
+        <option value="H">H</option>
+        <option value="J">J</option>
+        <option value="K">K</option>
+        <option value="L">L</option>
+        <option value="M">M</option>
+        <option value="N">N</option>
+        <option value="P">P</option>
+      </select>
+      <div class="setting-hint" id="hintElecRegion">決定使用哪個地區的電價，預設會根據郵區自動判斷。</div>
+      <div class="setting-hint" id="detectedRegionHint" style="margin-top:4px;"></div>
+    </div>
+
+    <div class="panel-section-label" id="secBinLabel">垃圾收集</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblCouncil" for="settingCouncil">地方議會 Council</label>
+      <input class="setting-input" id="settingCouncil" placeholder="e.g. Coventry City Council">
+      <div class="setting-hint" id="hintCouncil">目前使用示範排程。填寫議會名稱後，未來可串接該會的實際收集日程。</div>
+    </div>
+
+    <div class="panel-section-label" id="secTransportLabel">交通</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblStation" for="settingStation">常用車站 / 地鐵站</label>
+      <input class="setting-input" id="settingStation" placeholder="e.g. Euston / Coventry">
+      <div class="setting-hint" id="hintStation">用於未來串接 TfL 或 National Rail 即時誤點資料。</div>
+    </div>
+
+    <div class="panel-section-label" id="secSolarLabel">太陽能</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblSolarCapacity" for="settingSolarCapacity">太陽能板容量 (kWp)</label>
+      <input class="setting-input" id="settingSolarCapacity" type="number" min="0" step="0.5" placeholder="e.g. 4">
+      <div class="setting-hint" id="hintSolarCapacity">用於估算今日預計發電量，一般家用系統約 3–4 kWp。</div>
+    </div>
+
+    <div class="panel-section-label" id="secLanguageLabel">語言 Language</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblLanguage" for="settingLanguage">介面語言</label>
+      <select class="setting-select" id="settingLanguage">
+        <option value="zh">繁體中文</option>
+        <option value="en">English</option>
+        <option value="pl">Polski</option>
+        <option value="cy">Cymraeg</option>
+      </select>
+      <div class="setting-hint" id="hintLanguage">選擇儀表板的顯示語言，未來會加入更多語言。</div>
+    </div>
+
+    <div class="panel-section-label" id="secRefreshLabel">更新頻率</div>
+    <div class="setting-row">
+      <label class="setting-label" id="lblRefresh" for="settingRefresh">自動更新間隔</label>
+      <select class="setting-select" id="settingRefresh">
+        <option value="1">每 1 分鐘</option>
+        <option value="5" selected>每 5 分鐘</option>
+        <option value="15">每 15 分鐘</option>
+        <option value="30">每 30 分鐘</option>
+      </select>
+    </div>
+
+    <div class="panel-section-label" id="secDisplayLabel">顯示</div>
+    <div class="setting-toggle-row">
+      <span class="setting-label" id="lblDarkMode" style="margin-bottom:0;">深色模式</span>
+      <button class="block-toggle" id="settingDarkMode"></button>
+    </div>
+
+    <button class="panel-save" id="settingsSave">儲存設定</button>
+  </div>
+</div>
+
+<script>
+// ============ STATE ============
+let state = {
+  lat: 52.4068, lon: -1.5197, // Coventry CV1 default
+  postcode: 'CV1',
+  council: '',
+  station: '',
+  solarKwp: 4,
+  dnoRegion: 'auto', // Octopus/DNO GSP region letter, or 'auto' to detect from postcode
+  binCycleStart: new Date('2026-08-05'), // a known Wednesday
+};
+
+// ============ BLOCK REGISTRY ============
+const blockRegistry = [
+  { id:'bin',         icon:'🗑' },
+  { id:'alert',       icon:'⛈' },
+  { id:'weather',     icon:'🌤' },
+  { id:'energy',      icon:'⚡' },
+  { id:'crime',       icon:'👮' },
+  { id:'solar',       icon:'☀️' },
+  { id:'pollen',      icon:'🌼' },
+  { id:'micro',       icon:'🛴' },
+  { id:'transport',   icon:'🚉' },
+  { id:'binSchedule', icon:'📅' },
+  { id:'deals',       icon:'🏷️' },
+  { id:'roadworks',   icon:'🚧' },
+];
+
+// Which blocks are backed by a real, live API call vs static/demo content.
+// 'live' blocks show "Updated HH:MM:SS" once fetched; 'demo' blocks always show "Demo data".
+const blockDataMode = {
+  bin:'demo',        // no unified UK council API exists — placeholder schedule
+  alert:'live',      // Met Office weather-code heuristic + EA Flood API
+  weather:'live',    // Open-Meteo forecast
+  energy:'live',     // Octopus Energy Agile tariff API
+  crime:'live',      // Police.uk street-level crime API
+  solar:'live',      // Open-Meteo shortwave radiation
+  pollen:'live',     // Open-Meteo air quality API
+  micro:'demo',      // no shared-mobility GBFS feed connected
+  transport:'demo',  // TfL / National Rail need a backend proxy — not connected
+  binSchedule:'demo',// same underlying data as `bin`
+  deals:'demo',      // no official API exists for reduced-yellow-label timing
+  roadworks:'demo',  // Street Manager / roadworks.org not connected
+};
+
+// Timestamp of the last successful fetch for each 'live' block, keyed by block id.
+const lastFetchedAt = {};
+
+function markFetched(blockId){
+  lastFetchedAt[blockId] = new Date();
+  updateStatusBadges();
+}
+
+function updateStatusBadges(){
+  const t = I18N[currentLang];
+  blockRegistry.forEach(b => {
+    const el = document.getElementById(`badge-${b.id}`);
+    if (!el) return;
+    if (blockDataMode[b.id] === 'live') {
+      el.classList.remove('demo');
+      el.classList.add('live');
+      const when = lastFetchedAt[b.id];
+      el.textContent = when ? t.badgeUpdated(when.toLocaleTimeString('en-GB')) : t.updating;
+    } else {
+      el.classList.remove('live');
+      el.classList.add('demo');
+      el.textContent = t.badgeDemo;
+    }
+  });
+}
+
+// Crime category icons (universal, not translated)
+const CRIME_ICONS = {
+  'anti social behaviour':'📢', 'bicycle theft':'🚲', 'burglary':'🏠',
+  'criminal damage arson':'🔥', 'drugs':'💊', 'other theft':'🧳',
+  'possession of weapons':'🔫', 'public order':'📣', 'robbery':'💰',
+  'shoplifting':'🛍️', 'theft from the person':'👛', 'vehicle crime':'🚗',
+  'violent crime':'👊', 'other crime':'⚠️'
+};
+
+// Approximate UK postcode-area → Octopus/DNO GSP region-letter mapping.
+// Best-effort from public DNO licence-area boundaries; edge cases near boundaries may be
+// inaccurate — a manual override is offered in Settings for exactly this reason.
+const REGION_AREA_MAP = {
+  A:['CB','CM','CO','IP','NR','SG','SS','AL','LU','MK','PE','NN'],
+  B:['DE','LE','LN','NG'],
+  C:['E','EC','N','NW','SE','SW','W','WC','BR','CR','DA','EN','HA','IG','KT','RM','SM','TW','UB','WD'],
+  D:['CH','LL','SY','CW'],
+  E:['B','CV','DY','HR','ST','TF','WR','WS','WV'],
+  F:['DH','DL','NE','SR','TS'],
+  G:['BB','BL','CA','FY','L','LA','M','OL','PR','SK','WN','WA'],
+  H:['BH','GU','HP','OX','PO','RG','SL','SO','SP'],
+  J:['BN','CT','ME','RH','TN'],
+  K:['CF','LD','NP','SA'],
+  L:['BA','BS','DT','EX','GL','PL','SN','TA','TQ','TR'],
+  M:['BD','DN','HD','HG','HU','HX','LS','S','WF','YO'],
+  N:['DG','EH','FK','G','KA','KY','ML','PA','TD'],
+  P:['AB','DD','IV','KW','PH','ZE','HS'],
+};
+const REGION_LETTERS = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P'];
+
+function detectOctopusRegion(postcode){
+  if (!postcode) return null;
+  const outward = postcode.trim().toUpperCase().split(' ')[0];
+  const areaMatch = outward.match(/^[A-Z]+/);
+  if (!areaMatch) return null;
+  const area = areaMatch[0];
+  for (const letter of REGION_LETTERS) {
+    if (REGION_AREA_MAP[letter].includes(area)) return letter;
+  }
+  return null;
+}
+
+function getEffectiveRegion(){
+  if (state.dnoRegion && state.dnoRegion !== 'auto') return state.dnoRegion;
+  return detectOctopusRegion(state.postcode) || 'C';
+}
+
+function updateDetectedRegionHint(){
+  const el = document.getElementById('detectedRegionHint');
+  if (!el) return;
+  const t = I18N[currentLang];
+  const letter = getEffectiveRegion();
+  el.textContent = t.detectedRegionText(letter, t.regionNames[letter] || letter);
+}
+
+// Weather condition → icon + sky gradient + text mode
+function getWeatherVisual(code, hour){
+  const night = hour < 6 || hour >= 20;
+  if (code === 0) return night
+    ? { icon:'🌙', gradient:'linear-gradient(160deg,#0B1C3D 0%,#1B2F5C 60%,#2E4373 100%)', text:'light' }
+    : { icon:'☀️', gradient:'linear-gradient(160deg,#6EC6FF 0%,#B8E3FF 55%,#EAF6FF 100%)', text:'dark' };
+  if (code === 1 || code === 2) return night
+    ? { icon:'☁️', gradient:'linear-gradient(160deg,#1B2947 0%,#2C3E63 60%,#43547E 100%)', text:'light' }
+    : { icon:'🌤️', gradient:'linear-gradient(160deg,#8FB8DE 0%,#C7DCEE 60%,#EAF2F8 100%)', text:'dark' };
+  if (code === 3) return { icon:'☁️', gradient:'linear-gradient(160deg,#9AA7B0 0%,#C3CBD1 60%,#E4E7E9 100%)', text:'dark' };
+  if (code === 45 || code === 48) return { icon:'🌫️', gradient:'linear-gradient(160deg,#B7BCC0 0%,#D6D9DB 60%,#ECEDEE 100%)', text:'dark' };
+  if (code === 95) return { icon:'⛈️', gradient:'linear-gradient(160deg,#2B2438 0%,#453A56 55%,#6B5A78 100%)', text:'light' };
+  if ([51,61,63,65,80].includes(code)) return { icon:'🌧️', gradient:'linear-gradient(160deg,#4C6B8A 0%,#6E8CA8 55%,#9DB4C7 100%)', text:'light' };
+  if ([71,73,75].includes(code)) return { icon:'❄️', gradient:'linear-gradient(160deg,#A9C0D8 0%,#D7E4F0 55%,#F3F7FB 100%)', text:'dark' };
+  return { icon:'🌤️', gradient:'linear-gradient(160deg,#8FB8DE 0%,#C7DCEE 60%,#EAF2F8 100%)', text:'dark' };
+}
+
+// ============ I18N ============
+let currentLang = 'en'; // default UI language
+
+const I18N = {
+  zh: {
+    title:'本區告示板', live:'即時更新中', updating:'更新中…', locating:'正在定位郵區…', notFound:'找不到此郵區，請重試',
+    pcPlaceholder:'郵區 e.g. CV1', goBtn:'更新', menuBlocks:'加減 Block', menuSettings:'Setting', menuAria:'選單', closeAria:'關閉',
+    binEyebrow:"明天請推出 · TOMORROW'S COLLECTION",
+    statTemp:'現時氣溫', statRain:'降雨機率', statFlood:'淹水警報',
+    floodNone:'無', floodUnavailable:'無法讀取', floodCount:n=>`${n} 個`,
+    envHeader:'環境與健康', uvLabel:'UV 指數', pollenLabel:'花粉濃度',
+    pollenLow:'低', pollenMid:'中', pollenHigh:'高', pollenNA:'無資料',
+    energyHeader:'Octopus 電價', energyLoadingTag:'載入中', energyCheap:'現時便宜 · 適合用電', energyMid:'一般價格', energyExp:'現時偏貴 · 建議延後用電', energyNA:'N/A', energyUnavailable:'Octopus 資料暫無法載入（可能非 Agile 地區）', sparkNow:'現在',
+    crimeHeader:'社區治安', crimeLoading:'正在讀取 Police.uk 數據…', crimeEmpty:'本月暫無記錄或資料未發布', crimeUnavailable:'Police.uk 資料暫時無法載入', crimeUnit:'宗',
+    transportHeader:'交通即時狀況', transportDemoTag:'示範資料 · 尚未連接即時 API', transportOnTime:'準時', transportDelayed:m=>`誤點 ${m} 分鐘`,
+    binScheduleHeader:'未來垃圾收集日程', binScheduleDemoTag:'示範排程 · 每週三黑桶／隔週三綠桶輪替',
+    footerSourcePrefix:'資料來源：', footerUpdatedPrefix:'最後更新：',
+    badgeUpdated:time=>`更新於 ${time}`, badgeDemo:'模擬資料',
+    panelBlocksTitle:'加減 Block', panelBlocksAvailable:'目前可用的模組', panelSettingsTitle:'Setting',
+    secRegion:'地區設定', lblPostcode:'郵區 Postcode', hintPostcode:'用於定位天氣、治安及淹水資料的所在位置。',
+    secElecRegion:'電力地區', lblElecRegion:'Octopus 電力地區', hintElecRegion:'決定使用哪個地區的電價，預設會根據郵區自動判斷。',
+    regionAuto:'自動（根據郵區判斷）', detectedRegionText:(letter,name)=>`目前判斷：${name}（Region ${letter}）`,
+    regionNames:{A:'東英格蘭',B:'東米德蘭',C:'倫敦',D:'北威爾斯及默西賽德',E:'西米德蘭',F:'東北英格蘭',G:'西北英格蘭',H:'南英格蘭',J:'東南英格蘭',K:'南威爾斯',L:'西南英格蘭',M:'約克郡',N:'南蘇格蘭',P:'北蘇格蘭'},
+    secBin:'垃圾收集', lblCouncil:'地方議會 Council', hintCouncil:'目前使用示範排程。填寫議會名稱後，未來可串接該會的實際收集日程。',
+    secTransport:'交通', lblStation:'常用車站 / 地鐵站', hintStation:'用於未來串接 TfL 或 National Rail 即時誤點資料。',
+    secLanguage:'語言 Language', lblLanguage:'介面語言', hintLanguage:'選擇儀表板的顯示語言，未來會加入更多語言。',
+    secRefresh:'更新頻率', lblRefresh:'自動更新間隔', refreshOpts:['每 1 分鐘','每 5 分鐘','每 15 分鐘','每 30 分鐘'],
+    secDisplay:'顯示', lblDarkMode:'深色模式', saveBtn:'儲存設定',
+    binGreenName:'Green Bin（回收物）', binGreenNote:'請放入紙張、塑膠、玻璃及金屬罐。請確保回收物已清洗乾淨，並勿使用膠袋盛載。',
+    binBlackName:'Black Bin（一般垃圾）', binBlackNote:'請於晚上放至路邊，收集時間約早上 6:30–8:00。逾期未推出將順延至下週。',
+    countdownHours:h=>`▸ 距離收集尚有 ${h} 小時 — 記得今晚推出！`, countdownDays:d=>`▸ 距離收集尚有 ${d} 天`,
+    alertClearBadge:'無警報', alertAmberBadge:'黃色提示', alertRedBadge:'橙色警報',
+    alertClearHeadline:'目前無天氣警報', alertClearSub:'天氣及淹水情況正常，可安心外出。',
+    alertFloodHeadline:n=>`本區發現 ${n} 個淹水警報`, alertFloodSub:'Environment Agency 偵測到附近有淹水警報，請留意低窪地區及排水情況。',
+    alertStormHeadline:'雷暴警報', alertStormSub:'預計有雷暴天氣，建議減少戶外活動並注意閃電安全。',
+    alertRainHeadline:'強降雨提示', alertRainSub:p=>`降雨機率達 ${p}%，出門建議攜帶雨具，留意排水渠是否暢通。`,
+    alertColdHeadline:'低溫結冰提示', alertColdSub:'氣溫接近冰點，路面可能結冰，駕駛及步行請加倍小心。',
+    wxLoading:'載入中…', wxUnavailable:'天氣資料暫時無法載入', wxUpdated:'天氣資料已更新',
+    wxDescMap:{0:'晴朗',1:'大致晴朗',2:'局部多雲',3:'多雲',45:'有霧',48:'凍霧',51:'毛毛雨',61:'小雨',63:'中雨',65:'大雨',71:'小雪',73:'中雪',75:'大雪',80:'陣雨',95:'雷暴'},
+    crimeCatNames:{'anti social behaviour':'反社會行為','bicycle theft':'單車盜竊','burglary':'入屋盜竊','criminal damage arson':'刑事毀壞/縱火','drugs':'毒品','other theft':'其他盜竊','possession of weapons':'管有武器','public order':'公共秩序','robbery':'搶劫','shoplifting':'商店盜竊','theft from the person':'扒竊','vehicle crime':'車輛罪案','violent crime':'暴力罪案','other crime':'其他罪案'},
+    dowNames:['週日','週一','週二','週三','週四','週五','週六'],
+    transit:{bus:'巴士', cityCentre:'市中心', hospital:'大學醫院'},
+    secSolar:'太陽能', lblSolarCapacity:'太陽能板容量 (kWp)', hintSolarCapacity:'用於估算今日預計發電量，一般家用系統約 3–4 kWp。',
+    solarHeader:'太陽能發電預測', solarHint:'今日預計發電量（估算）', solarUnavailable:'太陽能資料暫時無法載入',
+    pollenHeader:'花粉與空氣質素', pollenTree:'樹木', pollenGrass:'草本', pollenWeed:'雜草',
+    aqiLabel:'PM2.5', aqiGood:'良好', aqiModerate:'一般', aqiPoor:'欠佳', aqiUnavailable:'PM2.5 無法讀取',
+    microHeader:'共享單車/滑板車', microDemoTag:'示範資料 · 尚未連接供應商 API', microAvailable:n=>`${n} 部可用`, microBattery:b=>`平均電量 ${b}%`,
+    dealsHeader:'超市減價黃標時間', dealsTag:'社區經驗參考 · 各分店略有不同',
+    roadHeader:'路面工程與泊車限制', roadDemoTag:'示範資料 · 尚未連接道路數據',
+    dealsStores:[
+      {name:"Sainsbury's", icon:'🟠', time:'生鮮類約傍晚 7:00–8:00 開始減價'},
+      {name:'Tesco', icon:'🔵', time:'通常分兩輪：下午 3 點及晚上 8:30 後'},
+      {name:'M&S', icon:'🟣', time:'晚市約 6:30 後陸續調低價錢'},
+    ],
+    roadworksItems:[
+      {icon:'🚧', title:'Foleshill Road 道路工程', detail:'單線通車，預計持續至本週五'},
+      {icon:'🅿️', title:'市中心賽事泊車限制', detail:'週六 12:00–18:00 部分街道暫停泊車'},
+    ],
+    blocks:{
+      bin:{name:'垃圾桶日程', desc:'明天推黑桶還是綠桶'}, alert:{name:'天氣／防汛警報', desc:'Met Office 與 EA 淹水警報'},
+      weather:{name:'環境與健康', desc:'氣溫、UV 指數、天氣狀況'}, energy:{name:'Octopus 電價', desc:'即時電價與省錢時段'},
+      crime:{name:'社區治安', desc:'Police.uk 近期罪案類別'}, solar:{name:'太陽能發電預測', desc:'今日預計發電量估算'},
+      pollen:{name:'花粉與空氣質素', desc:'Tree / Grass / Weed 花粉濃度'}, micro:{name:'共享單車/滑板車', desc:'附近可用車輛與電量'},
+      transport:{name:'交通即時狀況', desc:'TfL / National Rail 誤點（待連接）'}, binSchedule:{name:'兩週垃圾日程表', desc:'示範排程總覽'},
+      deals:{name:'超市減價時間', desc:'黃標優惠社區經驗'}, roadworks:{name:'路面工程與泊車', desc:'臨時道路及泊車限制'},
+    },
+  },
+  en: {
+    title:'Local Noticeboard', live:'Live', updating:'Updating…', locating:'Locating postcode…', notFound:'Postcode not found, please try again',
+    pcPlaceholder:'Postcode e.g. CV1', goBtn:'Go', menuBlocks:'Modules', menuSettings:'Settings', menuAria:'Menu', closeAria:'Close',
+    binEyebrow:"Put out tomorrow · TOMORROW'S COLLECTION",
+    statTemp:'Current Temp', statRain:'Rain Chance', statFlood:'Flood Alerts',
+    floodNone:'None', floodUnavailable:'Unavailable', floodCount:n=>`${n}`,
+    envHeader:'Environment & Health', uvLabel:'UV Index', pollenLabel:'Pollen Level',
+    pollenLow:'Low', pollenMid:'Moderate', pollenHigh:'High', pollenNA:'No data',
+    energyHeader:'Octopus Energy Price', energyLoadingTag:'Loading', energyCheap:'Cheap now · good time to use', energyMid:'Average price', energyExp:'Pricey now · consider delaying', energyNA:'N/A', energyUnavailable:'Octopus data unavailable (may not be an Agile region)', sparkNow:'Now',
+    crimeHeader:'Local Crime', crimeLoading:'Loading Police.uk data…', crimeEmpty:'No records this month or data not yet published', crimeUnavailable:'Police.uk data unavailable right now', crimeUnit:'cases',
+    transportHeader:'Live Transport', transportDemoTag:'Demo data · live API not yet connected', transportOnTime:'On time', transportDelayed:m=>`Delayed ${m} min`,
+    binScheduleHeader:'Upcoming Bin Collections', binScheduleDemoTag:'Demo schedule · black bin weekly, green bin fortnightly, both on Wed',
+    footerSourcePrefix:'Data sources: ', footerUpdatedPrefix:'Last updated: ',
+    badgeUpdated:time=>`Updated ${time}`, badgeDemo:'Demo data',
+    panelBlocksTitle:'Modules', panelBlocksAvailable:'Available modules', panelSettingsTitle:'Settings',
+    secRegion:'Location', lblPostcode:'Postcode', hintPostcode:'Used to locate weather, crime and flood data for your area.',
+    secElecRegion:'Electricity Region', lblElecRegion:'Octopus Electricity Region', hintElecRegion:'Determines which regional tariff is used. Defaults to auto-detect from your postcode.',
+    regionAuto:'Auto (detect from postcode)', detectedRegionText:(letter,name)=>`Detected: ${name} (Region ${letter})`,
+    regionNames:{A:'Eastern England',B:'East Midlands',C:'London',D:'North Wales & Merseyside',E:'West Midlands',F:'North East England',G:'North West England',H:'Southern England',J:'South East England',K:'South Wales',L:'South West England',M:'Yorkshire',N:'South Scotland',P:'North Scotland'},
+    secBin:'Bin Collection', lblCouncil:'Local Council', hintCouncil:'Currently using a demo schedule. Enter your council name so real collection data can be connected later.',
+    secTransport:'Transport', lblStation:'Usual Station / Stop', hintStation:'Used to connect live TfL or National Rail delay data in future.',
+    secLanguage:'Language', lblLanguage:'Interface Language', hintLanguage:'Choose the dashboard display language — more languages coming soon.',
+    secRefresh:'Refresh Rate', lblRefresh:'Auto-refresh interval', refreshOpts:['Every 1 min','Every 5 min','Every 15 min','Every 30 min'],
+    secDisplay:'Display', lblDarkMode:'Dark Mode', saveBtn:'Save Settings',
+    binGreenName:'Green Bin (Recycling)', binGreenNote:'Paper, plastic, glass and cans only. Please rinse recyclables and do not use plastic bags.',
+    binBlackName:'Black Bin (General Waste)', binBlackNote:'Put out by the evening before, collection around 6:30–8:00am. Missed bins roll over to next week.',
+    countdownHours:h=>`▸ ${h}h until collection — put your bin out tonight!`, countdownDays:d=>`▸ ${d} days until collection`,
+    alertClearBadge:'No Alerts', alertAmberBadge:'Amber Alert', alertRedBadge:'Red Alert',
+    alertClearHeadline:'No weather alerts right now', alertClearSub:'Weather and flood conditions are normal — safe to head out.',
+    alertFloodHeadline:n=>`${n} flood alert${n===1?'':'s'} nearby`, alertFloodSub:'Environment Agency has detected flood alerts nearby — watch low-lying areas and drainage.',
+    alertStormHeadline:'Thunderstorm Warning', alertStormSub:'Thunderstorms expected — limit outdoor activity and stay lightning-safe.',
+    alertRainHeadline:'Heavy Rain Notice', alertRainSub:p=>`Rain chance ${p}% — take an umbrella and check drains aren't blocked.`,
+    alertColdHeadline:'Cold & Ice Notice', alertColdSub:'Temperatures near freezing — roads may ice over, take care driving and walking.',
+    wxLoading:'Loading…', wxUnavailable:'Weather data unavailable right now', wxUpdated:'Weather updated',
+    wxDescMap:{0:'Clear',1:'Mostly clear',2:'Partly cloudy',3:'Cloudy',45:'Foggy',48:'Freezing fog',51:'Drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Showers',95:'Thunderstorm'},
+    crimeCatNames:{'anti social behaviour':'Anti-social behaviour','bicycle theft':'Bicycle theft','burglary':'Burglary','criminal damage arson':'Criminal damage/arson','drugs':'Drugs','other theft':'Other theft','possession of weapons':'Possession of weapons','public order':'Public order','robbery':'Robbery','shoplifting':'Shoplifting','theft from the person':'Theft from person','vehicle crime':'Vehicle crime','violent crime':'Violent crime','other crime':'Other crime'},
+    dowNames:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    transit:{bus:'Bus', cityCentre:'City Centre', hospital:'University Hospital'},
+    secSolar:'Solar', lblSolarCapacity:'Solar Panel Capacity (kWp)', hintSolarCapacity:'Used to estimate today\'s expected generation. Typical homes are around 3–4 kWp.',
+    solarHeader:'Solar Forecast', solarHint:"Estimated generation today", solarUnavailable:'Solar data unavailable right now',
+    pollenHeader:'Pollen & Air Quality', pollenTree:'Tree', pollenGrass:'Grass', pollenWeed:'Weed',
+    aqiLabel:'PM2.5', aqiGood:'Good', aqiModerate:'Moderate', aqiPoor:'Poor', aqiUnavailable:'PM2.5 unavailable',
+    microHeader:'Shared Bikes & Scooters', microDemoTag:'Demo data · provider API not yet connected', microAvailable:n=>`${n} available`, microBattery:b=>`avg. battery ${b}%`,
+    dealsHeader:'Supermarket Reduced Section', dealsTag:'Community tip · varies by branch',
+    roadHeader:'Roadworks & Parking', roadDemoTag:'Demo data · road data not yet connected',
+    dealsStores:[
+      {name:"Sainsbury's", icon:'🟠', time:'Fresh food usually marked down from around 7–8pm'},
+      {name:'Tesco', icon:'🔵', time:'Often two rounds: early afternoon and after 8:30pm'},
+      {name:'M&S', icon:'🟣', time:'Prices start dropping from around 6:30pm onwards'},
+    ],
+    roadworksItems:[
+      {icon:'🚧', title:'Foleshill Road roadworks', detail:'Single-lane traffic, expected until Friday this week'},
+      {icon:'🅿️', title:'City centre event parking suspension', detail:'Some streets restricted Sat 12:00–18:00'},
+    ],
+    blocks:{
+      bin:{name:'Bin Collection', desc:'Black or green bin tomorrow'}, alert:{name:'Weather / Flood Alerts', desc:'Met Office & EA flood alerts'},
+      weather:{name:'Environment & Health', desc:'Temp, UV index, conditions'}, energy:{name:'Octopus Energy Price', desc:'Live prices & cheap hours'},
+      crime:{name:'Local Crime', desc:'Recent Police.uk categories'}, solar:{name:'Solar Forecast', desc:"Today's estimated generation"},
+      pollen:{name:'Pollen & Air Quality', desc:'Tree / Grass / Weed pollen levels'}, micro:{name:'Shared Bikes & Scooters', desc:'Nearby availability & battery'},
+      transport:{name:'Live Transport', desc:'TfL / National Rail delays (pending)'}, binSchedule:{name:'Bin Schedule', desc:'Demo schedule overview'},
+      deals:{name:'Supermarket Deals', desc:'Reduced-section timing tips'}, roadworks:{name:'Roadworks & Parking', desc:'Temporary road & parking restrictions'},
+    },
+  },
+  pl: {
+    title:'Tablica Lokalna', live:'Na żywo', updating:'Aktualizowanie…', locating:'Lokalizowanie kodu pocztowego…', notFound:'Nie znaleziono kodu pocztowego, spróbuj ponownie',
+    pcPlaceholder:'Kod pocztowy np. CV1', goBtn:'OK', menuBlocks:'Moduły', menuSettings:'Ustawienia', menuAria:'Menu', closeAria:'Zamknij',
+    binEyebrow:"Wystaw jutro · TOMORROW'S COLLECTION",
+    statTemp:'Aktualna temp.', statRain:'Szansa deszczu', statFlood:'Alerty powodziowe',
+    floodNone:'Brak', floodUnavailable:'Niedostępne', floodCount:n=>`${n}`,
+    envHeader:'Środowisko i zdrowie', uvLabel:'Indeks UV', pollenLabel:'Poziom pyłków',
+    pollenLow:'Niski', pollenMid:'Średni', pollenHigh:'Wysoki', pollenNA:'Brak danych',
+    energyHeader:'Cena energii Octopus', energyLoadingTag:'Ładowanie', energyCheap:'Tanio teraz · dobry czas na zużycie', energyMid:'Cena przeciętna', energyExp:'Drogo teraz · warto odłożyć', energyNA:'N/D', energyUnavailable:'Dane Octopus niedostępne (może to nie region Agile)', sparkNow:'Teraz',
+    crimeHeader:'Przestępczość lokalna', crimeLoading:'Ładowanie danych Police.uk…', crimeEmpty:'Brak danych w tym miesiącu lub dane niepublikowane', crimeUnavailable:'Dane Police.uk chwilowo niedostępne', crimeUnit:'zdarz.',
+    transportHeader:'Transport na żywo', transportDemoTag:'Dane demo · API na żywo niepodłączone', transportOnTime:'Punktualnie', transportDelayed:m=>`Opóźnienie ${m} min`,
+    binScheduleHeader:'Nadchodzące odbiory śmieci', binScheduleDemoTag:'Harmonogram demo · czarny kosz co tydzień, zielony co dwa tygodnie, w środy',
+    footerSourcePrefix:'Źródła danych: ', footerUpdatedPrefix:'Ostatnia aktualizacja: ',
+    badgeUpdated:time=>`Zaktualizowano ${time}`, badgeDemo:'Dane demonstracyjne',
+    panelBlocksTitle:'Moduły', panelBlocksAvailable:'Dostępne moduły', panelSettingsTitle:'Ustawienia',
+    secRegion:'Lokalizacja', lblPostcode:'Kod pocztowy', hintPostcode:'Używane do lokalizowania danych o pogodzie, przestępczości i powodziach.',
+    secElecRegion:'Region energetyczny', lblElecRegion:'Region Octopus', hintElecRegion:'Określa, jaka taryfa regionalna jest używana. Domyślnie wykrywana automatycznie z kodu pocztowego.',
+    regionAuto:'Automatycznie (z kodu pocztowego)', detectedRegionText:(letter,name)=>`Wykryto: ${name} (Region ${letter})`,
+    regionNames:{A:'Wschodnia Anglia',B:'East Midlands',C:'Londyn',D:'Płn. Walia i Merseyside',E:'West Midlands',F:'Płn.-wsch. Anglia',G:'Płn.-zach. Anglia',H:'Południowa Anglia',J:'Płd.-wsch. Anglia',K:'Południowa Walia',L:'Płd.-zach. Anglia',M:'Yorkshire',N:'Południowa Szkocja',P:'Północna Szkocja'},
+    secBin:'Odbiór śmieci', lblCouncil:'Rada lokalna', hintCouncil:'Obecnie używany jest harmonogram demonstracyjny. Wpisz nazwę rady, aby połączyć rzeczywiste dane w przyszłości.',
+    secTransport:'Transport', lblStation:'Zwykła stacja / przystanek', hintStation:'Używane do przyszłego połączenia z danymi TfL lub National Rail.',
+    secLanguage:'Język', lblLanguage:'Język interfejsu', hintLanguage:'Wybierz język panelu — więcej języków wkrótce.',
+    secRefresh:'Częstotliwość odświeżania', lblRefresh:'Interwał auto-odświeżania', refreshOpts:['Co 1 min','Co 5 min','Co 15 min','Co 30 min'],
+    secDisplay:'Wyświetlanie', lblDarkMode:'Tryb ciemny', saveBtn:'Zapisz ustawienia',
+    binGreenName:'Zielony kosz (Recykling)', binGreenNote:'Tylko papier, plastik, szkło i puszki. Umyj surowce wtórne i nie używaj plastikowych toreb.',
+    binBlackName:'Czarny kosz (Odpady ogólne)', binBlackNote:'Wystaw wieczorem wcześniej, odbiór ok. 6:30–8:00. Nieodebrane kosze przechodzą na następny tydzień.',
+    countdownHours:h=>`▸ ${h} godz. do odbioru — wystaw kosz dziś wieczorem!`, countdownDays:d=>`▸ ${d} dni do odbioru`,
+    alertClearBadge:'Brak alertów', alertAmberBadge:'Alert pomarańczowy', alertRedBadge:'Alert czerwony',
+    alertClearHeadline:'Brak alertów pogodowych', alertClearSub:'Pogoda i sytuacja powodziowa w normie — można bezpiecznie wyjść.',
+    alertFloodHeadline:n=>`${n} alerty powodziowe w pobliżu`, alertFloodSub:'Environment Agency wykrył alerty powodziowe w pobliżu — uważaj na tereny niskie i odwodnienie.',
+    alertStormHeadline:'Ostrzeżenie o burzy', alertStormSub:'Spodziewane burze — ograniczaj aktywność na zewnątrz i uważaj na pioruny.',
+    alertRainHeadline:'Ostrzeżenie o ulewie', alertRainSub:p=>`Szansa deszczu ${p}% — zabierz parasol i sprawdź, czy odpływy nie są zablokowane.`,
+    alertColdHeadline:'Ostrzeżenie o mrozie i lodzie', alertColdSub:'Temperatury bliskie zeru — drogi mogą oblodzić się, zachowaj ostrożność.',
+    wxLoading:'Ładowanie…', wxUnavailable:'Dane pogodowe chwilowo niedostępne', wxUpdated:'Dane pogodowe zaktualizowane',
+    wxDescMap:{0:'Bezchmurnie',1:'Prawie bezchmurnie',2:'Częściowe zachmurzenie',3:'Pochmurno',45:'Mgła',48:'Mgła marznąca',51:'Mżawka',61:'Lekki deszcz',63:'Deszcz',65:'Ulewny deszcz',71:'Lekki śnieg',73:'Śnieg',75:'Intensywny śnieg',80:'Przelotne opady',95:'Burza'},
+    crimeCatNames:{'anti social behaviour':'Zachowania antyspołeczne','bicycle theft':'Kradzież roweru','burglary':'Włamanie','criminal damage arson':'Zniszczenie mienia/podpalenie','drugs':'Narkotyki','other theft':'Inna kradzież','possession of weapons':'Posiadanie broni','public order':'Porządek publiczny','robbery':'Rozbój','shoplifting':'Kradzież sklepowa','theft from the person':'Kradzież osobista','vehicle crime':'Przestępstwo pojazdowe','violent crime':'Przestępstwo z użyciem przemocy','other crime':'Inne przestępstwo'},
+    dowNames:['niedz.','pon.','wt.','śr.','czw.','pt.','sob.'],
+    transit:{bus:'Autobus', cityCentre:'Centrum miasta', hospital:'Szpital Uniwersytecki'},
+    secSolar:'Fotowoltaika', lblSolarCapacity:'Moc instalacji PV (kWp)', hintSolarCapacity:'Używane do szacowania dzisiejszej produkcji. Typowy dom to ok. 3–4 kWp.',
+    solarHeader:'Prognoza fotowoltaiki', solarHint:'Szacowana produkcja dzisiaj', solarUnavailable:'Dane fotowoltaiczne chwilowo niedostępne',
+    pollenHeader:'Pyłki i jakość powietrza', pollenTree:'Drzewa', pollenGrass:'Trawy', pollenWeed:'Chwasty',
+    aqiLabel:'PM2.5', aqiGood:'Dobra', aqiModerate:'Umiarkowana', aqiPoor:'Zła', aqiUnavailable:'PM2.5 niedostępne',
+    microHeader:'Rowery i hulajnogi', microDemoTag:'Dane demo · API dostawcy niepodłączone', microAvailable:n=>`${n} dostępnych`, microBattery:b=>`śr. bateria ${b}%`,
+    dealsHeader:'Przeceny w supermarketach', dealsTag:'Wskazówka społeczności · zależy od sklepu',
+    roadHeader:'Roboty drogowe i parkowanie', roadDemoTag:'Dane demo · dane drogowe niepodłączone',
+    dealsStores:[
+      {name:"Sainsbury's", icon:'🟠', time:'Świeże produkty zwykle przecenione od ok. 19:00–20:00'},
+      {name:'Tesco', icon:'🔵', time:'Często dwie tury: wczesne popołudnie i po 20:30'},
+      {name:'M&S', icon:'🟣', time:'Ceny zaczynają spadać od ok. 18:30'},
+    ],
+    roadworksItems:[
+      {icon:'🚧', title:'Roboty drogowe na Foleshill Road', detail:'Ruch jednym pasem, do piątku tego tygodnia'},
+      {icon:'🅿️', title:'Zawieszenie parkowania — wydarzenie w centrum', detail:'Niektóre ulice ograniczone w sob. 12:00–18:00'},
+    ],
+    blocks:{
+      bin:{name:'Odbiór śmieci', desc:'Czarny czy zielony kosz jutro'}, alert:{name:'Pogoda / Alerty powodziowe', desc:'Alerty Met Office i EA'},
+      weather:{name:'Środowisko i zdrowie', desc:'Temp., indeks UV, warunki'}, energy:{name:'Cena energii Octopus', desc:'Ceny na żywo i tanie godziny'},
+      crime:{name:'Przestępczość lokalna', desc:'Ostatnie kategorie Police.uk'}, solar:{name:'Prognoza fotowoltaiki', desc:'Szacowana produkcja dzisiaj'},
+      pollen:{name:'Pyłki i jakość powietrza', desc:'Poziomy pyłków drzew / traw / chwastów'}, micro:{name:'Rowery i hulajnogi', desc:'Dostępność i bateria w pobliżu'},
+      transport:{name:'Transport na żywo', desc:'Opóźnienia TfL / National Rail (wkrótce)'}, binSchedule:{name:'Harmonogram śmieci', desc:'Przegląd harmonogramu demo'},
+      deals:{name:'Przeceny w supermarketach', desc:'Wskazówki o godzinach przecen'}, roadworks:{name:'Roboty drogowe i parkowanie', desc:'Tymczasowe ograniczenia drogowe'},
+    },
+  },
+  cy: {
+    title:'Hysbysfwrdd Lleol', live:'Byw', updating:"Wrthi'n diweddaru…", locating:"Lleoli'r cod post…", notFound:"Cod post heb ei ganfod, ceisiwch eto",
+    pcPlaceholder:'Cod post e.e. CV1', goBtn:'Ewch', menuBlocks:'Modiwlau', menuSettings:'Gosodiadau', menuAria:'Dewislen', closeAria:'Cau',
+    binEyebrow:"Rhowch allan yfory · TOMORROW'S COLLECTION",
+    statTemp:'Tymheredd Nawr', statRain:'Siawns Glaw', statFlood:'Rhybuddion Llifogydd',
+    floodNone:'Dim', floodUnavailable:'Ddim ar gael', floodCount:n=>`${n}`,
+    envHeader:'Amgylchedd ac Iechyd', uvLabel:'Mynegai UV', pollenLabel:'Lefel Paill',
+    pollenLow:'Isel', pollenMid:'Cymedrol', pollenHigh:'Uchel', pollenNA:'Dim data',
+    energyHeader:'Pris Ynni Octopus', energyLoadingTag:'Yn llwytho', energyCheap:'Rhad nawr · amser da i ddefnyddio', energyMid:'Pris cyfartalog', energyExp:'Drud nawr · ystyriwch aros', energyNA:'D/G', energyUnavailable:"Data Octopus ddim ar gael (efallai nad yw'n ardal Agile)", sparkNow:'Nawr',
+    crimeHeader:'Trosedd Lleol', crimeLoading:'Yn llwytho data Police.uk…', crimeEmpty:"Dim cofnodion y mis hwn neu ddata heb ei gyhoeddi", crimeUnavailable:'Data Police.uk ddim ar gael ar hyn o bryd', crimeUnit:'achos',
+    transportHeader:'Trafnidiaeth Fyw', transportDemoTag:"Data demo · API byw heb ei gysylltu", transportOnTime:'Ar amser', transportDelayed:m=>`Oedi ${m} munud`,
+    binScheduleHeader:'Casgliadau Biniau Nesaf', binScheduleDemoTag:"Amserlen demo · bin du bob wythnos, gwyrdd bob pythefnos, ddydd Mercher",
+    footerSourcePrefix:'Ffynonellau data: ', footerUpdatedPrefix:'Diweddarwyd ddiwethaf: ',
+    badgeUpdated:time=>`Diweddarwyd ${time}`, badgeDemo:'Data enghreifftiol',
+    panelBlocksTitle:'Modiwlau', panelBlocksAvailable:'Modiwlau ar gael', panelSettingsTitle:'Gosodiadau',
+    secRegion:'Lleoliad', lblPostcode:'Cod Post', hintPostcode:"Defnyddir i leoli data tywydd, trosedd a llifogydd ar gyfer eich ardal.",
+    secElecRegion:'Rhanbarth Trydan', lblElecRegion:'Rhanbarth Octopus', hintElecRegion:"Yn pennu pa dariff rhanbarthol a ddefnyddir. Diofyn yw canfod yn awtomatig o'ch cod post.",
+    regionAuto:'Awtomatig (o god post)', detectedRegionText:(letter,name)=>`Canfuwyd: ${name} (Rhanbarth ${letter})`,
+    regionNames:{A:'Dwyrain Lloegr',B:'East Midlands',C:'Llundain',D:'Gogledd Cymru a Glannau Mersi',E:'West Midlands',F:'Gogledd-ddwyrain Lloegr',G:'Gogledd-orllewin Lloegr',H:'De Lloegr',J:'De-ddwyrain Lloegr',K:'De Cymru',L:'De-orllewin Lloegr',M:'Swydd Efrog',N:"De'r Alban",P:'Gogledd yr Alban'},
+    secBin:'Casglu Biniau', lblCouncil:'Cyngor Lleol', hintCouncil:"Ar hyn o bryd yn defnyddio amserlen demo. Rhowch enw'ch cyngor fel y gellir cysylltu data go iawn yn nes ymlaen.",
+    secTransport:'Trafnidiaeth', lblStation:'Gorsaf / Safle Arferol', hintStation:"Defnyddir i gysylltu data oedi byw TfL neu National Rail yn y dyfodol.",
+    secLanguage:'Iaith', lblLanguage:'Iaith y Rhyngwyneb', hintLanguage:"Dewiswch iaith arddangos y dangosfwrdd — mwy o ieithoedd yn dod cyn bo hir.",
+    secRefresh:'Cyfradd Adnewyddu', lblRefresh:'Cyfwng adnewyddu awtomatig', refreshOpts:['Bob 1 munud','Bob 5 munud','Bob 15 munud','Bob 30 munud'],
+    secDisplay:'Dangos', lblDarkMode:'Modd Tywyll', saveBtn:'Cadw Gosodiadau',
+    binGreenName:'Bin Gwyrdd (Ailgylchu)', binGreenNote:"Papur, plastig, gwydr a chaniau'n unig. Golchwch y deunyddiau ailgylchu a pheidiwch â defnyddio bagiau plastig.",
+    binBlackName:'Bin Du (Gwastraff Cyffredinol)', binBlackNote:"Rhowch allan gyda'r nos cyn hynny, casglu tua 6:30–8:00yb. Bydd biniau a gollwyd yn cario drosodd i'r wythnos nesaf.",
+    countdownHours:h=>`▸ ${h} awr tan y casgliad — rhowch eich bin allan heno!`, countdownDays:d=>`▸ ${d} diwrnod tan y casgliad`,
+    alertClearBadge:'Dim Rhybuddion', alertAmberBadge:'Rhybudd Ambr', alertRedBadge:'Rhybudd Coch',
+    alertClearHeadline:'Dim rhybuddion tywydd ar hyn o bryd', alertClearSub:"Mae'r tywydd a llifogydd yn normal — yn ddiogel i fynd allan.",
+    alertFloodHeadline:n=>`${n} rhybudd llifogydd gerllaw`, alertFloodSub:"Mae Asiantaeth yr Amgylchedd wedi canfod rhybuddion llifogydd gerllaw — gwyliwch ardaloedd isel a draeniad.",
+    alertStormHeadline:'Rhybudd Storm Fellt a Tharanau', alertStormSub:'Disgwylir stormydd taranau — cyfyngwch weithgaredd awyr agored a byddwch yn ddiogel rhag mellt.',
+    alertRainHeadline:'Rhybudd Glaw Trwm', alertRainSub:p=>`Siawns glaw ${p}% — ewch â ymbarél a gwiriwch nad yw'r draeniau wedi'u blocio.`,
+    alertColdHeadline:'Rhybudd Oer a Rhew', alertColdSub:"Tymereddau'n agos at rewbwynt — gall ffyrdd rewi, byddwch yn ofalus wrth yrru a cherdded.",
+    wxLoading:'Yn llwytho…', wxUnavailable:'Data tywydd ddim ar gael ar hyn o bryd', wxUpdated:"Tywydd wedi'i ddiweddaru",
+    wxDescMap:{0:'Clir',1:'Clir gan mwyaf',2:'Rhannol gymylog',3:'Cymylog',45:'Niwlog',48:'Niwl rhewllyd',51:'Glaw mân',61:'Glaw ysgafn',63:'Glaw',65:'Glaw trwm',71:'Eira ysgafn',73:'Eira',75:'Eira trwm',80:'Cawodydd',95:'Storm daranau'},
+    crimeCatNames:{'anti social behaviour':'Ymddygiad gwrthgymdeithasol','bicycle theft':'Dwyn beic','burglary':'Byrgleriaeth','criminal damage arson':'Difrod troseddol/llosgi bwriadol','drugs':'Cyffuriau','other theft':'Dwyn arall','possession of weapons':'Meddu ar arfau','public order':'Trefn gyhoeddus','robbery':'Lladrad','shoplifting':'Dwyn o siop','theft from the person':'Dwyn oddi ar berson','vehicle crime':'Trosedd cerbyd','violent crime':'Trosedd treisgar','other crime':'Trosedd arall'},
+    dowNames:['Sul','Llun','Maw','Mer','Iau','Gwe','Sad'],
+    transit:{bus:'Bws', cityCentre:'Canol y Ddinas', hospital:'Ysbyty Prifysgol'},
+    secSolar:'Solar', lblSolarCapacity:'Capasiti Panel Solar (kWp)', hintSolarCapacity:"Defnyddir i amcangyfrif cynhyrchiad heddiw. Mae cartrefi arferol tua 3–4 kWp.",
+    solarHeader:'Rhagolwg Solar', solarHint:'Cynhyrchiad amcangyfrifedig heddiw', solarUnavailable:'Data solar ddim ar gael ar hyn o bryd',
+    pollenHeader:'Paill ac Ansawdd Aer', pollenTree:'Coed', pollenGrass:'Glaswellt', pollenWeed:'Chwyn',
+    aqiLabel:'PM2.5', aqiGood:'Da', aqiModerate:'Cymedrol', aqiPoor:'Gwael', aqiUnavailable:'PM2.5 ddim ar gael',
+    microHeader:'Beiciau a Sgwteri Rhannu', microDemoTag:"Data demo · API'r darparwr heb ei gysylltu", microAvailable:n=>`${n} ar gael`, microBattery:b=>`batri cyfartalog ${b}%`,
+    dealsHeader:'Adran Ostyngiadau Archfarchnad', dealsTag:'Awgrym cymunedol · yn amrywio fesul cangen',
+    roadHeader:'Gwaith Ffordd a Pharcio', roadDemoTag:'Data demo · data ffordd heb ei gysylltu',
+    dealsStores:[
+      {name:"Sainsbury's", icon:'🟠', time:"Bwyd ffres fel arfer yn rhatach o tua 7–8yh"},
+      {name:'Tesco', icon:'🔵', time:'Yn aml dwy rownd: prynhawn cynnar a phas 8:30yh'},
+      {name:'M&S', icon:'🟣', time:"Prisiau'n dechrau gostwng o tua 6:30yh ymlaen"},
+    ],
+    roadworksItems:[
+      {icon:'🚧', title:'Gwaith ffordd Foleshill Road', detail:'Traffig un lôn, disgwylir tan ddydd Gwener'},
+      {icon:'🅿️', title:'Ataliad parcio — digwyddiad canol dinas', detail:"Rhai strydoedd wedi cyfyngu Sad 12:00–18:00"},
+    ],
+    blocks:{
+      bin:{name:'Casglu Biniau', desc:'Bin du neu wyrdd yfory'}, alert:{name:'Tywydd / Rhybuddion Llifogydd', desc:'Rhybuddion Met Office ac EA'},
+      weather:{name:'Amgylchedd ac Iechyd', desc:'Tymheredd, mynegai UV, cyflwr'}, energy:{name:'Pris Ynni Octopus', desc:'Prisiau byw ac oriau rhad'},
+      crime:{name:'Trosedd Lleol', desc:"Categorïau diweddar Police.uk"}, solar:{name:'Rhagolwg Solar', desc:'Cynhyrchiad amcangyfrifedig heddiw'},
+      pollen:{name:'Paill ac Ansawdd Aer', desc:'Lefelau paill coed / glaswellt / chwyn'}, micro:{name:'Beiciau a Sgwteri Rhannu', desc:'Argaeledd a batri gerllaw'},
+      transport:{name:'Trafnidiaeth Fyw', desc:'Oedi TfL / National Rail (i ddod)'}, binSchedule:{name:'Amserlen Biniau', desc:'Trosolwg amserlen demo'},
+      deals:{name:'Bargeinion Archfarchnad', desc:'Awgrymiadau amseru gostyngiadau'}, roadworks:{name:'Gwaith Ffordd a Pharcio', desc:'Cyfyngiadau ffordd a pharcio dros dro'},
+    },
+  },
+};
+const monNames = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+let blockState = {};
+blockRegistry.forEach(b => blockState[b.id] = true); // all on by default
+
+// ============ PERSISTENCE (localStorage) ============
+const STORAGE_KEY = 'ukLocalDashboard.v1';
+let refreshMins = 5;
+let darkModeOn = false;
+
+function loadPersisted(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (typeof saved.lat === 'number') state.lat = saved.lat;
+    if (typeof saved.lon === 'number') state.lon = saved.lon;
+    if (saved.postcode) state.postcode = saved.postcode;
+    if (saved.council) state.council = saved.council;
+    if (saved.station) state.station = saved.station;
+    if (typeof saved.solarKwp === 'number') state.solarKwp = saved.solarKwp;
+    if (saved.dnoRegion) state.dnoRegion = saved.dnoRegion;
+    if (saved.refreshMins) refreshMins = saved.refreshMins;
+    if (typeof saved.darkMode === 'boolean') darkModeOn = saved.darkMode;
+    if (saved.lang && I18N[saved.lang]) currentLang = saved.lang;
+    if (saved.blockState) Object.assign(blockState, saved.blockState);
+  }catch(e){}
+}
+
+function persist(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      lat: state.lat, lon: state.lon, postcode: state.postcode,
+      council: state.council, station: state.station, solarKwp: state.solarKwp, dnoRegion: state.dnoRegion,
+      refreshMins, darkMode: darkModeOn, lang: currentLang, blockState
+    }));
+  }catch(e){}
+}
+
+function applyDarkMode(){
+  document.body.classList.toggle('dark-mode', darkModeOn);
+  const btn = document.getElementById('settingDarkMode');
+  if (btn) btn.classList.toggle('on', darkModeOn);
+}
+
+function setLanguage(lang, {skipRerender} = {}){
+  if (!I18N[lang]) return;
+  currentLang = lang;
+  applyI18n();
+  if (!skipRerender) {
+    computeBinSchedule();
+    renderBinStrip();
+    renderTransit();
+    renderMicroMobility();
+    renderSupermarketDeals();
+    renderRoadworks();
+    refreshAll();
+  }
+}
+
+function applyI18n(){
+  const t = I18N[currentLang];
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const setPh = (id, val) => { const el = document.getElementById(id); if (el) el.placeholder = val; };
+
+  document.documentElement.lang = currentLang;
+  set('siteTitle', t.title);
+  setPh('pcInput', t.pcPlaceholder);
+  document.getElementById('pcGo').textContent = t.goBtn;
+  set('menuBlocksLabel', t.menuBlocks);
+  set('menuSettingsLabel', t.menuSettings);
+  document.getElementById('menuBtn').setAttribute('aria-label', t.menuAria);
+  document.getElementById('blocksPanelClose').setAttribute('aria-label', t.closeAria);
+  document.getElementById('settingsPanelClose').setAttribute('aria-label', t.closeAria);
+  set('binEyebrow', t.binEyebrow);
+  set('statTempLabel', t.statTemp);
+  set('statRainLabel', t.statRain);
+  set('statFloodLabel', t.statFlood);
+  set('envHeaderText', t.envHeader);
+  set('uvLabelText', t.uvLabel);
+  set('pollenLabelText', t.pollenLabel);
+  set('energyHeaderText', t.energyHeader);
+  set('sparkNowLabel', t.sparkNow);
+  set('crimeHeaderText', t.crimeHeader);
+  set('crimeLoadingText', t.crimeLoading);
+  set('solarHeaderText', t.solarHeader);
+  set('solarHintText', t.solarHint);
+  set('pollenHeaderText', t.pollenHeader);
+  set('microHeaderText', t.microHeader);
+  set('microDemoTag', t.microDemoTag);
+  set('dealsHeaderText', t.dealsHeader);
+  set('dealsTag', t.dealsTag);
+  set('roadHeaderText', t.roadHeader);
+  set('roadDemoTag', t.roadDemoTag);
+  set('secSolarLabel', t.secSolar);
+  set('lblSolarCapacity', t.lblSolarCapacity);
+  set('hintSolarCapacity', t.hintSolarCapacity);
+  set('transportHeaderText', t.transportHeader);
+  set('transportDemoTag', t.transportDemoTag);
+  set('binScheduleHeaderText', t.binScheduleHeader);
+  set('binScheduleDemoTag', t.binScheduleDemoTag);
+  set('footerSourceText', t.footerSourcePrefix + 'Open-Meteo · Environment Agency Flood API · Police.uk · Octopus Energy API');
+  updateStatusBadges();
+  set('blocksPanelTitleText', t.panelBlocksTitle);
+  set('settingsPanelTitleText', t.panelSettingsTitle);
+  set('secRegionLabel', t.secRegion);
+  set('lblPostcode', t.lblPostcode);
+  set('hintPostcode', t.hintPostcode);
+  set('secElecRegionLabel', t.secElecRegion);
+  set('lblElecRegion', t.lblElecRegion);
+  set('hintElecRegion', t.hintElecRegion);
+  const elecRegionSelect = document.getElementById('settingElecRegion');
+  if (elecRegionSelect) {
+    Array.from(elecRegionSelect.options).forEach(opt => {
+      opt.textContent = opt.value === 'auto' ? t.regionAuto : `${opt.value} — ${t.regionNames[opt.value]}`;
+    });
+  }
+  updateDetectedRegionHint();
+  set('secBinLabel', t.secBin);
+  set('lblCouncil', t.lblCouncil);
+  set('hintCouncil', t.hintCouncil);
+  setPh('settingCouncil', 'e.g. Coventry City Council');
+  set('secTransportLabel', t.secTransport);
+  set('lblStation', t.lblStation);
+  set('hintStation', t.hintStation);
+  set('secLanguageLabel', t.secLanguage);
+  set('lblLanguage', t.lblLanguage);
+  set('hintLanguage', t.hintLanguage);
+  set('secRefreshLabel', t.secRefresh);
+  set('lblRefresh', t.lblRefresh);
+  set('secDisplayLabel', t.secDisplay);
+  set('lblDarkMode', t.lblDarkMode);
+  document.getElementById('settingsSave').textContent = t.saveBtn;
+
+  const refreshSelect = document.getElementById('settingRefresh');
+  Array.from(refreshSelect.options).forEach((opt, i) => { opt.textContent = t.refreshOpts[i]; });
+
+  const langSelect = document.getElementById('settingLanguage');
+  if (langSelect) langSelect.value = currentLang;
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLang);
+  });
+}
+
+function applyBlockVisibility(){
+  blockRegistry.forEach(b => {
+    const el = document.querySelector(`[data-block="${b.id}"]`);
+    if (el) el.style.display = blockState[b.id] ? '' : 'none';
+  });
+}
+
+function renderBlocksPanel(){
+  const t = I18N[currentLang];
+  const body = document.getElementById('blocksPanelBody');
+  body.innerHTML = `<div class="panel-section-label">${t.panelBlocksAvailable}</div>` +
+    blockRegistry.map(b => {
+      const info = t.blocks[b.id];
+      return `
+      <div class="block-row ${blockState[b.id] ? '' : 'disabled'}">
+        <div class="block-row-left">
+          <span class="block-row-icon">${b.icon}</span>
+          <div>
+            <div class="block-row-name">${info.name}</div>
+            <div class="block-row-desc">${info.desc}</div>
+          </div>
+        </div>
+        <button class="block-toggle ${blockState[b.id] ? 'on' : ''}" data-toggle-block="${b.id}" aria-label="${info.name}"></button>
+      </div>
+    `;
+    }).join('');
+
+  body.querySelectorAll('[data-toggle-block]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-toggle-block');
+      blockState[id] = !blockState[id];
+      applyBlockVisibility();
+      renderBlocksPanel();
+      persist();
+    });
+  });
+}
+
+// ============ MENU + PANEL CONTROLS ============
+const menuBtn = document.getElementById('menuBtn');
+const menuDropdown = document.getElementById('menuDropdown');
+const panelOverlay = document.getElementById('panelOverlay');
+const blocksPanel = document.getElementById('blocksPanel');
+const settingsPanel = document.getElementById('settingsPanel');
+
+function toggleMenu(force){
+  const willOpen = force !== undefined ? force : !menuDropdown.classList.contains('open');
+  menuDropdown.classList.toggle('open', willOpen);
+  menuBtn.classList.toggle('open', willOpen);
+  menuBtn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+}
+menuBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+document.addEventListener('click', (e) => {
+  if (!menuDropdown.contains(e.target) && e.target !== menuBtn) toggleMenu(false);
+});
+
+function openPanel(panel){
+  panelOverlay.classList.add('open');
+  panel.classList.add('open');
+  toggleMenu(false);
+}
+function closeAllPanels(){
+  panelOverlay.classList.remove('open');
+  blocksPanel.classList.remove('open');
+  settingsPanel.classList.remove('open');
+}
+panelOverlay.addEventListener('click', closeAllPanels);
+document.getElementById('blocksPanelClose').addEventListener('click', closeAllPanels);
+document.getElementById('settingsPanelClose').addEventListener('click', closeAllPanels);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllPanels(); });
+
+document.getElementById('openBlocksItem').addEventListener('click', () => {
+  renderBlocksPanel();
+  openPanel(blocksPanel);
+});
+document.getElementById('openSettingsItem').addEventListener('click', () => {
+  document.getElementById('settingPostcode').value = state.postcode || '';
+  document.getElementById('settingCouncil').value = state.council || '';
+  document.getElementById('settingStation').value = state.station || '';
+  document.getElementById('settingSolarCapacity').value = state.solarKwp || '';
+  document.getElementById('settingElecRegion').value = state.dnoRegion || 'auto';
+  updateDetectedRegionHint();
+  document.getElementById('settingRefresh').value = String(refreshMins);
+  document.getElementById('settingLanguage').value = currentLang;
+  document.getElementById('settingDarkMode').classList.toggle('on', darkModeOn);
+  openPanel(settingsPanel);
+});
+
+// ============ LANGUAGE SWITCH ============
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setLanguage(btn.getAttribute('data-lang'));
+    persist();
+  });
+});
+document.getElementById('settingLanguage').addEventListener('change', function(){
+  setLanguage(this.value);
+});
+
+// ============ SETTINGS SAVE ============
+let refreshTimerId = null;
+
+document.getElementById('settingDarkMode').addEventListener('click', function(){
+  darkModeOn = !darkModeOn;
+  applyDarkMode();
+});
+
+document.getElementById('settingsSave').addEventListener('click', async () => {
+  const pcVal = document.getElementById('settingPostcode').value.trim();
+  state.council = document.getElementById('settingCouncil').value.trim();
+  state.station = document.getElementById('settingStation').value.trim();
+  const kwpVal = parseFloat(document.getElementById('settingSolarCapacity').value);
+  state.solarKwp = isNaN(kwpVal) ? state.solarKwp : kwpVal;
+  state.dnoRegion = document.getElementById('settingElecRegion').value;
+  refreshMins = parseInt(document.getElementById('settingRefresh').value, 10);
+
+  if (pcVal) {
+    const ok = await geocodePostcode(pcVal);
+    if (ok) {
+      document.getElementById('pcLabel').textContent = state.postcode.split(' ')[0];
+      refreshAll();
+    }
+  }
+
+  updateDetectedRegionHint();
+  fetchEnergy();
+  fetchSolar();
+  renderTransit();
+  renderMicroMobility();
+  renderSupermarketDeals();
+  renderRoadworks();
+
+  if (refreshTimerId) clearInterval(refreshTimerId);
+  refreshTimerId = setInterval(refreshAll, refreshMins * 60 * 1000);
+
+  persist();
+  closeAllPanels();
+});
+
+// ============ CLOCK ============
+function updateClock(){
+  const now = new Date();
+  document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('en-GB');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ============ BIN LOGIC (demo schedule engine) ============
+function binTypeFor(isGreenWeek){
+  const t = I18N[currentLang];
+  return isGreenWeek ?
+    { name:t.binGreenName, color:'#2E5339', note:t.binGreenNote } :
+    { name:t.binBlackName, color:'#1D2B36', note:t.binBlackNote };
+}
+
+function getUpcomingBinDates(n){
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const cycleStart = new Date(state.binCycleStart);
+  cycleStart.setHours(0,0,0,0);
+
+  // find next Wednesday collection (today counts if today is Wednesday)
+  let next = new Date(today);
+  const dayDiff = (3 - next.getDay() + 7) % 7; // 3 = Wednesday
+  next.setDate(next.getDate() + dayDiff);
+
+  const dates = [];
+  for(let i=0;i<n;i++){
+    const d = new Date(next);
+    d.setDate(d.getDate() + i*7);
+    const weeksSinceCycle = Math.round((d - cycleStart) / (7*24*60*60*1000));
+    dates.push({ date: d, isGreenWeek: weeksSinceCycle % 2 === 0 });
+  }
+  return dates;
+}
+
+function computeBinSchedule(){
+  const t = I18N[currentLang];
+  const { date: next, isGreenWeek } = getUpcomingBinDates(1)[0];
+
+  document.getElementById('binDow').textContent = t.dowNames[next.getDay()];
+  document.getElementById('binDom').textContent = next.getDate();
+  document.getElementById('binMon').textContent = monNames[next.getMonth()];
+
+  const binType = binTypeFor(isGreenWeek);
+  document.getElementById('binName').textContent = binType.name;
+  document.getElementById('binSwatch').style.background = binType.color;
+  document.getElementById('binNote').textContent = binType.note;
+
+  const hoursLeft = Math.round((next - new Date()) / (1000*60*60));
+  const daysLeft = Math.floor(hoursLeft/24);
+  const countdownText = daysLeft <= 0 ? t.countdownHours(hoursLeft) : t.countdownDays(daysLeft);
+  document.getElementById('binCountdown').textContent = countdownText;
+
+  // toggle dots
+  const toggle = document.getElementById('binToggle');
+  toggle.innerHTML = '';
+  for(let i=0;i<3;i++){
+    const dot = document.createElement('div');
+    dot.className = 'bin-dot' + (i === (isGreenWeek?1:0) ? ' active':'');
+    toggle.appendChild(dot);
+  }
+}
+
+function renderBinStrip(){
+  const t = I18N[currentLang];
+  const strip = document.getElementById('binStrip');
+  if (!strip) return;
+  const upcoming = getUpcomingBinDates(4);
+  strip.innerHTML = upcoming.map(({date, isGreenWeek}) => {
+    const binType = binTypeFor(isGreenWeek);
+    return `
+      <div class="bin-strip-item">
+        <span class="bin-strip-swatch" style="background:${binType.color};"></span>
+        <div>
+          <div class="bsi-date">${monNames[date.getMonth()]} ${date.getDate()}</div>
+          <div class="bsi-dow">${t.dowNames[date.getDay()]}</div>
+          <div class="bsi-name">${binType.name}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ WEATHER + UV + POLLEN (Open-Meteo, no key needed) ============
+async function fetchWeather(){
+  const t = I18N[currentLang];
+  try{
+    const wxUrl = `https://api.open-meteo.com/v1/forecast?latitude=${state.lat}&longitude=${state.lon}&current=temperature_2m,precipitation_probability,weather_code&hourly=uv_index&forecast_days=1&timezone=Europe%2FLondon`;
+    const wxRes = await fetch(wxUrl);
+    const wx = await wxRes.json();
+
+    const temp = Math.round(wx.current.temperature_2m);
+    const rainProb = wx.current.precipitation_probability ?? 0;
+    document.getElementById('wxTemp').textContent = `${temp}°C`;
+    document.getElementById('statTemp').textContent = `${temp}°`;
+    document.getElementById('statRain').textContent = `${rainProb}%`;
+
+    const wCode = wx.current.weather_code;
+    document.getElementById('wxDesc').textContent = t.wxDescMap[wCode] || t.wxUpdated;
+
+    // Icon + sky background driven by current condition
+    const nowHourForIcon = new Date().getHours();
+    const visual = getWeatherVisual(wCode, nowHourForIcon);
+    document.getElementById('wxIcon').textContent = visual.icon;
+    const weatherCard = document.querySelector('[data-block="weather"]');
+    if (weatherCard) {
+      weatherCard.style.background = visual.gradient;
+      weatherCard.classList.remove('sky-dark-text','sky-light-text');
+      weatherCard.classList.add(visual.text === 'light' ? 'sky-light-text' : 'sky-dark-text');
+    }
+
+    // UV — take current hour value
+    const nowHour = new Date().getHours();
+    const uvNow = wx.hourly && wx.hourly.uv_index ? Math.round(wx.hourly.uv_index[nowHour] * 10)/10 : null;
+    const uvEl = document.getElementById('uvVal');
+    if (uvNow !== null) {
+      uvEl.textContent = uvNow;
+      uvEl.className = 'pv ' + (uvNow < 3 ? 'low' : uvNow < 6 ? 'mid' : 'high');
+    }
+
+    // Alert card weather-driven fallback (severe rain heuristic)
+    updateAlertCard({ rainProb, temp, weatherCode: wCode });
+
+    markFetched('weather');
+    markFetched('alert');
+
+  }catch(e){
+    document.getElementById('wxDesc').textContent = t.wxUnavailable;
+  }
+}
+
+// ============ POLLEN BREAKDOWN + AIR QUALITY (Open-Meteo, no key) ============
+function pollenLevel(t, value){
+  if (value > 50) return { label:t.pollenHigh, cls:'high' };
+  if (value > 20) return { label:t.pollenMid, cls:'mid' };
+  return { label:t.pollenLow, cls:'low' };
+}
+
+async function fetchPollen(){
+  const t = I18N[currentLang];
+  const list = document.getElementById('pollenBreakdownList');
+  try{
+    const aqUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${state.lat}&longitude=${state.lon}&current=grass_pollen,birch_pollen,alder_pollen,mugwort_pollen,ragweed_pollen,pm2_5&timezone=Europe%2FLondon`;
+    const aqRes = await fetch(aqUrl);
+    const aq = await aqRes.json();
+    const c = aq.current || {};
+    const tree = Math.max(c.birch_pollen||0, c.alder_pollen||0);
+    const grass = c.grass_pollen || 0;
+    const weed = Math.max(c.mugwort_pollen||0, c.ragweed_pollen||0);
+    const pm25 = c.pm2_5;
+
+    const rows = [
+      { label:t.pollenTree, value:tree }, { label:t.pollenGrass, value:grass }, { label:t.pollenWeed, value:weed },
+    ];
+    list.innerHTML = rows.map(r => {
+      const lvl = pollenLevel(t, r.value);
+      const pct = Math.min(100, Math.round((r.value / 80) * 100));
+      return `
+        <div class="pollen-row">
+          <span class="pr-label">${r.label}</span>
+          <span class="pr-track"><span class="pr-fill ${lvl.cls}" style="width:${pct}%"></span></span>
+          <span class="pr-value">${lvl.label}</span>
+        </div>
+      `;
+    }).join('');
+
+    const aqiLine = document.getElementById('aqiLine');
+    if (typeof pm25 === 'number') {
+      const aqiLabel = pm25 < 12 ? t.aqiGood : pm25 < 35 ? t.aqiModerate : t.aqiPoor;
+      aqiLine.textContent = `${t.aqiLabel} ${Math.round(pm25)} µg/m³ · ${aqiLabel}`;
+    } else {
+      aqiLine.textContent = `${t.aqiLabel} ${t.aqiUnavailable}`;
+    }
+    markFetched('pollen');
+  }catch(e){
+    list.innerHTML = `<div style="font-size:13px;color:var(--ink-soft);">${t.aqiUnavailable}</div>`;
+    document.getElementById('aqiLine').textContent = `${t.aqiLabel} ${t.aqiUnavailable}`;
+  }
+}
+
+// ============ SOLAR FORECAST (Open-Meteo shortwave radiation, no key) ============
+async function fetchSolar(){
+  const t = I18N[currentLang];
+  try{
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${state.lat}&longitude=${state.lon}&daily=shortwave_radiation_sum&hourly=shortwave_radiation&forecast_days=1&timezone=Europe%2FLondon`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const dailyMJ = data.daily?.shortwave_radiation_sum?.[0] ?? null;
+    const kwp = state.solarKwp || 4;
+    if (dailyMJ !== null) {
+      const kwhToday = (dailyMJ / 3.6) * kwp * 0.8; // irradiance(kWh/m²) x system size x performance ratio
+      document.getElementById('solarKwh').textContent = kwhToday.toFixed(1);
+    }
+    document.getElementById('solarHintText').textContent = t.solarHint;
+
+    const hourly = data.hourly?.shortwave_radiation || [];
+    const maxRad = Math.max(...hourly, 1);
+    const bars = document.getElementById('solarSparkBars');
+    bars.innerHTML = hourly.map(v => {
+      const h = Math.max(2, Math.round((v / maxRad) * 36));
+      return `<div class="spark-bar" style="height:${h}px"></div>`;
+    }).join('');
+    markFetched('solar');
+  }catch(e){
+    document.getElementById('solarKwh').textContent = t.energyNA;
+    document.getElementById('solarHintText').textContent = t.solarUnavailable;
+  }
+}
+
+// ============ MICRO-MOBILITY (demo — real version needs Voi/Lime/TfL GBFS feeds) ============
+function renderMicroMobility(){
+  const t = I18N[currentLang];
+  const list = document.getElementById('microList');
+  if (!list) return;
+  const providers = [
+    { icon:'🛴', name:'Voi', count:6, battery:72 },
+    { icon:'🍋', name:'Lime', count:3, battery:54 },
+    { icon:'🚲', name:'Santander Cycles', count:11, battery:null },
+  ];
+  list.innerHTML = providers.map(p => `
+    <div class="transit-row">
+      <div class="transit-line">
+        <span class="transit-badge" style="background:#1D2B36;">${p.icon}</span>
+        <span>${p.name}</span>
+      </div>
+      <span class="transit-status good">${t.microAvailable(p.count)}${p.battery !== null ? ' · ' + t.microBattery(p.battery) : ''}</span>
+    </div>
+  `).join('');
+}
+
+// ============ SUPERMARKET REDUCED SECTION TIPS (static community info, not live data) ============
+function renderSupermarketDeals(){
+  const t = I18N[currentLang];
+  const list = document.getElementById('dealsList');
+  if (!list) return;
+  list.innerHTML = t.dealsStores.map(s => `
+    <div class="info-row">
+      <div class="info-row-top"><span class="transit-badge" style="background:#1D2B36;">${s.icon}</span><span>${s.name}</span></div>
+      <div class="info-row-detail">${s.time}</div>
+    </div>
+  `).join('');
+}
+
+// ============ ROADWORKS & PARKING (demo — real version needs council/TfL road data) ============
+function renderRoadworks(){
+  const t = I18N[currentLang];
+  const list = document.getElementById('roadList');
+  if (!list) return;
+  list.innerHTML = t.roadworksItems.map(r => `
+    <div class="info-row">
+      <div class="info-row-top"><span class="transit-badge" style="background:#1D2B36;">${r.icon}</span><span>${r.title}</span></div>
+      <div class="info-row-detail">${r.detail}</div>
+    </div>
+  `).join('');
+}
+
+// ============ FLOOD ALERTS (Environment Agency, no key) ============
+let floodCount = 0;
+async function fetchFlood(){
+  const t = I18N[currentLang];
+  try{
+    const url = `https://environment.data.gov.uk/flood-monitoring/id/floods?lat=${state.lat}&long=${state.lon}&dist=15`;
+    const res = await fetch(url);
+    const data = await res.json();
+    floodCount = data.items ? data.items.length : 0;
+    document.getElementById('statFlood').textContent = floodCount > 0 ? t.floodCount(floodCount) : t.floodNone;
+  }catch(e){
+    document.getElementById('statFlood').textContent = t.floodUnavailable;
+  }
+}
+
+function updateAlertCard({rainProb, temp, weatherCode}){
+  const t = I18N[currentLang];
+  const card = document.getElementById('alertCard');
+  const badge = document.getElementById('alertBadge');
+  const headline = document.getElementById('alertHeadline');
+  const sub = document.getElementById('alertSub');
+
+  let level = 'clear';
+  let headlineText = t.alertClearHeadline;
+  let subText = t.alertClearSub;
+
+  if (floodCount > 0) {
+    level = 'red';
+    headlineText = t.alertFloodHeadline(floodCount);
+    subText = t.alertFloodSub;
+  } else if (weatherCode >= 95) {
+    level = 'red';
+    headlineText = t.alertStormHeadline;
+    subText = t.alertStormSub;
+  } else if (rainProb >= 70 || weatherCode >= 80) {
+    level = 'amber';
+    headlineText = t.alertRainHeadline;
+    subText = t.alertRainSub(rainProb);
+  } else if (temp <= 2) {
+    level = 'amber';
+    headlineText = t.alertColdHeadline;
+    subText = t.alertColdSub;
+  }
+
+  card.className = 'alert-card ' + level;
+  badge.className = 'alert-badge ' + level;
+  badge.textContent = level === 'clear' ? t.alertClearBadge : level === 'amber' ? t.alertAmberBadge : t.alertRedBadge;
+  headline.textContent = headlineText;
+  sub.textContent = subText;
+}
+
+// ============ CRIME (Police.uk, no key) ============
+async function fetchCrime(){
+  const t = I18N[currentLang];
+  try{
+    // Police API only has data up to ~2 months lag; try recent months
+    const now = new Date();
+    now.setMonth(now.getMonth() - 2);
+    const ym = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${state.lat}&lng=${state.lon}&date=${ym}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    const counts = {};
+    data.forEach(c => {
+      const cat = c.category.replace(/-/g,' ');
+      counts[cat] = (counts[cat]||0) + 1;
+    });
+    const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+    const list = document.getElementById('crimeList');
+    if (sorted.length === 0) {
+      list.innerHTML = `<div style="font-size:13px;color:var(--ink-soft);">${t.crimeEmpty}</div>`;
+    } else {
+      list.innerHTML = sorted.map(([cat,n]) => `
+        <div class="crime-row">
+          <span class="crime-cat">${CRIME_ICONS[cat] || '⚠️'} ${t.crimeCatNames[cat] || cat}</span>
+          <span class="crime-n">${n} ${t.crimeUnit}</span>
+        </div>
+      `).join('');
+    }
+    markFetched('crime');
+  }catch(e){
+    document.getElementById('crimeList').innerHTML = `<div style="font-size:13px;color:var(--ink-soft);">${t.crimeUnavailable}</div>`;
+  }
+}
+
+// ============ OCTOPUS ENERGY (Agile tariff, no key, public product endpoint) ============
+// ============ OCTOPUS ENERGY: resolve the currently live Agile product code ============
+// Product codes rotate periodically (e.g. AGILE-24-04-03 → AGILE-24-10-01); hardcoding one
+// goes stale and silently breaks pricing. We resolve the current live code from the public
+// products list each time, so this keeps working after future Octopus product refreshes.
+let cachedAgileProductCode = null;
+let cachedAgileProductCodeAt = 0;
+
+async function resolveCurrentAgileProduct(){
+  const FIVE_MIN = 5 * 60 * 1000;
+  if (cachedAgileProductCode && (Date.now() - cachedAgileProductCodeAt) < FIVE_MIN) {
+    return cachedAgileProductCode;
+  }
+  try{
+    const res = await fetch('https://api.octopus.energy/v1/products/?is_variable=true&brand=OCTOPUS_ENERGY');
+    const data = await res.json();
+    const agileProducts = (data.results || []).filter(p =>
+      /AGILE/i.test(p.code) && !/OUTGOING/i.test(p.code) && !/EXPORT/i.test(p.code)
+    );
+    agileProducts.sort((a,b) => new Date(b.available_from) - new Date(a.available_from));
+    if (agileProducts.length > 0) {
+      cachedAgileProductCode = agileProducts[0].code;
+      cachedAgileProductCodeAt = Date.now();
+      return cachedAgileProductCode;
+    }
+  }catch(e){}
+  return null;
+}
+
+async function fetchEnergy(){
+  const t = I18N[currentLang];
+  try{
+    // Public Octopus Agile rates endpoint — region letter resolved from postcode (or manual override)
+    const regionLetter = getEffectiveRegion();
+    const productCode = await resolveCurrentAgileProduct();
+    if (!productCode) throw new Error('could not resolve current Agile product code');
+
+    const tariffCode = `E-1R-${productCode}-${regionLetter}`;
+    const url = `https://api.octopus.energy/v1/products/${productCode}/electricity-tariffs/${tariffCode}/standard-unit-rates/`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`rates request failed: ${res.status}`);
+    const data = await res.json();
+    const rates = (data.results || []).slice().reverse(); // chronological
+
+    const now = new Date();
+    const current = rates.find(r => new Date(r.valid_from) <= now && new Date(r.valid_to) > now);
+
+    if (current) {
+      const price = current.value_inc_vat;
+      document.getElementById('priceNow').textContent = price.toFixed(1);
+      const tag = document.getElementById('priceTag');
+      if (price < 15) { tag.className='price-tag cheap'; tag.textContent=t.energyCheap; }
+      else if (price < 25) { tag.className='price-tag mid'; tag.textContent=t.energyMid; }
+      else { tag.className='price-tag exp'; tag.textContent=t.energyExp; }
+    }
+
+    // sparkline: next 24 half-hour slots from now
+    const upcoming = rates.filter(r => new Date(r.valid_to) > now).slice(0, 24);
+    const maxP = Math.max(...upcoming.map(r=>r.value_inc_vat), 1);
+    const bars = document.getElementById('sparkBars');
+    bars.innerHTML = upcoming.map((r,i) => {
+      const h = Math.max(4, Math.round((r.value_inc_vat / maxP) * 42));
+      const isNow = i === 0;
+      return `<div class="spark-bar${isNow?' now':''}" style="height:${h}px" title="${new Date(r.valid_from).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}: ${r.value_inc_vat.toFixed(1)}p"></div>`;
+    }).join('');
+
+    markFetched('energy');
+
+  }catch(e){
+    document.getElementById('priceNow').textContent = t.energyNA;
+    document.getElementById('priceTag').textContent = t.energyUnavailable;
+    document.getElementById('priceTag').className = 'price-tag mid';
+  }
+}
+
+// ============ TRANSPORT (demo/mock — real version needs TfL / National Rail Darwin API via backend proxy) ============
+function renderTransit(){
+  const t = I18N[currentLang];
+  const list = document.getElementById('transitList');
+  if (!list) return;
+  const origin = state.station || 'Coventry';
+  const demoRows = [
+    { badge:'WM', color:'#5C2D91', icon:'🚆', line:`${origin} → Birmingham New St`, status:t.transportOnTime, good:true, eta:'3 min' },
+    { badge:'XC', color:'#EE2E24', icon:'🚆', line:`${origin} → London Euston`, status:t.transportDelayed(8), good:false, eta:'17 min' },
+    { badge:'12X', color:'#00A19A', icon:'🚌', line:`${t.transit.cityCentre} → ${t.transit.hospital} (${t.transit.bus})`, status:t.transportOnTime, good:true, eta:'6 min' },
+    { badge:'AVN', color:'#1D2B36', icon:'🚆', line:`${origin} → Nuneaton`, status:t.transportOnTime, good:true, eta:'22 min' },
+  ];
+  list.innerHTML = demoRows.map(r => `
+    <div class="transit-row">
+      <div class="transit-line">
+        <span class="transit-badge" style="background:${r.color};">${r.badge}</span>
+        <span>${r.icon} ${r.line}</span>
+      </div>
+      <span class="transit-status ${r.good ? 'good' : 'bad'}">${r.status} · ${r.eta}</span>
+    </div>
+  `).join('');
+}
+
+// ============ GEOCODE POSTCODE (postcodes.io, free UK gov-adjacent) ============
+// Users often type just the outward code (e.g. "CH41") rather than a full postcode
+// (e.g. "CH41 2UD"). The /postcodes/:postcode endpoint only matches full postcodes and
+// 404s on outward-only input, so we try that first, then fall back to /outcodes/:outcode
+// (which is built exactly for this case and returns the outcode's centre point).
+async function geocodePostcode(pc){
+  const cleaned = pc.trim();
+  if (!cleaned) return false;
+
+  // 1) try as a full postcode
+  try{
+    const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(cleaned)}`);
+    const data = await res.json();
+    if (data.status === 200 && data.result) {
+      state.lat = data.result.latitude;
+      state.lon = data.result.longitude;
+      state.postcode = data.result.postcode;
+      return true;
+    }
+  }catch(e){}
+
+  // 2) fall back to outward-code-only lookup (e.g. "CH41", "SW1A")
+  try{
+    const outcode = cleaned.split(' ')[0].toUpperCase();
+    const res = await fetch(`https://api.postcodes.io/outcodes/${encodeURIComponent(outcode)}`);
+    const data = await res.json();
+    if (data.status === 200 && data.result) {
+      state.lat = data.result.latitude;
+      state.lon = data.result.longitude;
+      state.postcode = data.result.outcode; // no inward part available at this resolution
+      return true;
+    }
+  }catch(e){}
+
+  return false;
+}
+
+// ============ REFRESH ORCHESTRATION ============
+async function refreshAll(){
+  const t = I18N[currentLang];
+  document.getElementById('liveStatus').textContent = t.updating;
+  await fetchFlood();
+  await Promise.all([fetchWeather(), fetchCrime(), fetchEnergy(), fetchPollen(), fetchSolar()]);
+  computeBinSchedule();
+  document.getElementById('liveStatus').textContent = t.live;
+  document.getElementById('lastUpdated').textContent = t.footerUpdatedPrefix + new Date().toLocaleTimeString('en-GB');
+}
+
+document.getElementById('pcGo').addEventListener('click', async () => {
+  const t = I18N[currentLang];
+  const val = document.getElementById('pcInput').value.trim();
+  if (!val) return;
+  document.getElementById('liveStatus').textContent = t.locating;
+  const ok = await geocodePostcode(val);
+  if (ok) {
+    document.getElementById('pcLabel').textContent = state.postcode.split(' ')[0];
+    refreshAll();
+    persist();
+  } else {
+    document.getElementById('liveStatus').textContent = t.notFound;
+  }
+});
+document.getElementById('pcInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') document.getElementById('pcGo').click();
+});
+
+// initial load
+loadPersisted();
+document.getElementById('pcLabel').textContent = state.postcode.split(' ')[0];
+applyDarkMode();
+applyI18n();
+applyBlockVisibility();
+computeBinSchedule();
+renderBinStrip();
+renderTransit();
+renderMicroMobility();
+renderSupermarketDeals();
+renderRoadworks();
+refreshAll();
+refreshTimerId = setInterval(refreshAll, refreshMins * 60 * 1000);
+</script>
+
+</body>
+</html>
